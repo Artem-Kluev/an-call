@@ -1,0 +1,13 @@
+@import "tailwindcss";
+@import "./theme.css";
+
+@layer base {
+  html {
+    @apply bg-background text-title;
+    scrollbar-gutter: stable;
+
+    @supports not (scrollbar-gutter: stable) {
+      overflow-y: scroll;
+    }
+  }
+}

@@ -1,0 +1,31 @@
+@theme {
+  --color-background: #fff;
+  --color-surface: #f0f3f5;
+  --color-title: #2c3c44;
+  --color-subtitle: #90a4ae;
+  --color-primary: #8bc34a;
+  --color-secondary: #5c8e29;
+  --color-setting: #546e7a;
+  --color-error: #e8364f;
+  --color-warning: #cddc39;
+  --color-success: #8bc34a;
+  --color-info: #2c3c44;
+
+  --shadow-right: 8px 0 10px var(--color-subtitle);
+}
+
+[data-theme="dark"] {
+  --color-background: #121212;
+  --color-surface: #1e1e1e;
+  --color-title: #e0e0e0;
+  --color-subtitle: #a0a0a0;
+  --color-primary: #8bc34a;
+  --color-secondary: #5c8e29;
+  --color-setting: #37474f;
+  --color-error: #ff5252;
+  --color-warning: #cddc39;
+  --color-success: #8bc34a;
+  --color-info: #90caf9;
+}
+
+@custom-variant dark (&:where([data-theme=dark] *));
