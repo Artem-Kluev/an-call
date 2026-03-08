@@ -14,7 +14,7 @@ const form = ref({
 
 const genders = [
   { value: "male", label: t("onboarding.fields.gender.male"), icon: "tabler:man" },
-  { value: "female", label: t("onboarding.fields.gender.female"), icon: "streamline-plump:toilet-sign-man " },
+  { value: "female", label: t("onboarding.fields.gender.female"), icon: "streamline-plump:toilet-sign-man" },
 ];
 
 const seekingOptions = [
@@ -27,7 +27,16 @@ const toggleTheme = () => {
 };
 
 const currentLocaleName = computed(() => {
-  return locales.value.find((l) => l.code === locale.value)?.name || locale.value;
+  return locales.value.find((l) => l.code === locale.value)?.label || locale.value;
+});
+
+const selectedLocale = computed({
+  get: () => locales.value.find((l) => l.code === locale.value) || locales.value[0],
+  set: (val) => {
+    if (val && typeof val === "object" && "code" in val) {
+      setLocale(val.code as "uk" | "ru" | "en");
+    }
+  },
 });
 </script>
 
@@ -46,89 +55,91 @@ const currentLocaleName = computed(() => {
     </div>
 
     <!-- Settings Sections -->
-    <div class="flex-grow space-y-10">
-      <!-- Language & Theme -->
-      <div class="space-y-4">
-        <div class="flex gap-3">
-          <!-- Language Select -->
-          <div class="flex-1">
-            <USelectMenu
-              v-model="locale"
-              :items="locales"
-              value-attribute="code"
-              option-attribute="name"
-              class="w-full rounded-2xl py-2"
-              size="lg"
-              @update:model-value="setLocale"
-            >
-              <template #leading>
-                <UIcon name="i-heroicons-language" class="h-5 w-5 opacity-50" />
-              </template>
-            </USelectMenu>
-          </div>
+    <div class="grow">
+      <UFormField :label="t('settings.language.label')" class="mt-2 mb-4" size="lg">
+        <USelectMenu
+          v-model="selectedLocale"
+          :items="locales"
+          :search-input="false"
+          class="w-full rounded-2xl py-3"
+          size="lg"
+        >
+          <template #leading>
+            <UIcon v-if="selectedLocale?.icon" :name="selectedLocale.icon" class="h-5 w-5" />
+            <UIcon v-else name="i-heroicons-language" class="h-5 w-5 opacity-50" />
+          </template>
 
-          <!-- Theme Toggle -->
-          <UButton color="neutral" variant="outline" size="lg" class="rounded-2xl px-5" @click="toggleTheme">
-            <UIcon :name="colorMode.value === 'dark' ? 'i-heroicons-moon' : 'i-heroicons-sun'" class="h-5 w-5" />
-          </UButton>
-        </div>
-      </div>
+          <template #item="{ item }">
+            <UIcon v-if="item.icon" :name="item.icon" class="h-5 w-5" />
+            <span class="truncate">{{ item.label }}</span>
+          </template>
+        </USelectMenu>
+      </UFormField>
 
       <UDivider />
 
       <!-- Profile Form (Existing) -->
-      <div class="space-y-8 opacity-80">
-        <div class="space-y-4">
-          <div
-            class="mb-5 flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50 p-3 dark:border-gray-800 dark:bg-gray-800/50"
-          >
-            <span class="text-primary text-2xl font-bold">{{ form.age }}</span>
-            <span class="text-xs font-semibold tracking-widest text-gray-400 uppercase">роки</span>
+      <div class="space-y-8">
+        <UFormField :label="t('onboarding.fields.age.label')" size="lg">
+          <div class="space-y-4">
+            <div
+              class="mb-5 flex items-center justify-between rounded-2xl border border-gray-300 bg-white p-2 dark:border-gray-800 dark:bg-gray-800/50"
+            >
+              <span class="text-primary text-xl font-bold">{{ form.age }}</span>
+              <span class="text-xs font-semibold tracking-widest text-gray-400 uppercase">роки</span>
+            </div>
+
+            <USlider v-model="form.age" :min="18" :max="60" size="lg" color="primary" />
           </div>
-          <USlider v-model="form.age" :min="18" :max="60" size="lg" color="primary" />
-        </div>
+        </UFormField>
 
-        <USelectMenu
-          v-model="form.city"
-          :items="ukraineCities"
-          :placeholder="t('onboarding.fields.city.placeholder')"
-          class="w-full rounded-2xl py-3"
-          size="xl"
-          searchable
-          :search-attributes="['label']"
-        />
+        <UFormField :label="t('onboarding.fields.city.label')" size="lg">
+          <USelectMenu
+            v-model="form.city"
+            :items="ukraineCities"
+            :placeholder="t('onboarding.fields.city.placeholder')"
+            class="w-full rounded-2xl py-3"
+            size="xl"
+            searchable
+            :search-attributes="['label']"
+          />
+        </UFormField>
 
-        <div class="flex gap-3">
-          <UButton
-            v-for="gender in genders"
-            :key="gender.value"
-            :variant="form.gender === gender.value ? 'solid' : 'outline'"
-            :color="form.gender === gender.value ? 'primary' : 'neutral'"
-            class="flex flex-1 items-center justify-between rounded-2xl px-6 py-3 transition-all duration-300"
-            @click="form.gender = gender.value"
-          >
-            <div class="flex items-center gap-4">
-              <UIcon :name="gender.icon" class="h-6 w-6 text-2xl" />
-              <span class="text-base font-semibold">{{ gender.label }}</span>
-            </div>
-          </UButton>
-        </div>
+        <UFormField :label="t('onboarding.fields.gender.label')" size="lg">
+          <div class="flex gap-3">
+            <UButton
+              v-for="gender in genders"
+              :key="gender.value"
+              :variant="form.gender === gender.value ? 'solid' : 'outline'"
+              :color="form.gender === gender.value ? 'primary' : 'neutral'"
+              class="flex flex-1 items-center justify-between rounded-2xl px-6 py-3 transition-all duration-300"
+              @click="form.gender = gender.value"
+            >
+              <div class="flex items-center gap-4">
+                <UIcon :name="gender.icon" class="h-6 w-6 text-2xl" />
+                <span class="text-base font-semibold">{{ gender.label }}</span>
+              </div>
+            </UButton>
+          </div>
+        </UFormField>
 
-        <div class="flex gap-3">
-          <UButton
-            v-for="option in seekingOptions"
-            :key="option.value"
-            :variant="form.seeking === option.value ? 'solid' : 'outline'"
-            :color="form.seeking === option.value ? 'primary' : 'neutral'"
-            class="flex flex-1 items-center justify-between rounded-2xl px-6 py-3 transition-all duration-300"
-            @click="form.seeking = option.value"
-          >
-            <div class="flex items-center gap-4">
-              <UIcon :name="option.icon" class="h-6 w-6 text-2xl" />
-              <span class="text-base font-semibold">{{ option.label }}</span>
-            </div>
-          </UButton>
-        </div>
+        <UFormField :label="t('onboarding.fields.seeking.label')" size="lg">
+          <div class="flex gap-3">
+            <UButton
+              v-for="option in seekingOptions"
+              :key="option.value"
+              :variant="form.seeking === option.value ? 'solid' : 'outline'"
+              :color="form.seeking === option.value ? 'primary' : 'neutral'"
+              class="flex flex-1 items-center justify-between rounded-2xl px-6 py-3 transition-all duration-300"
+              @click="form.seeking = option.value"
+            >
+              <div class="flex items-center gap-4">
+                <UIcon :name="option.icon" class="h-6 w-6 text-2xl" />
+                <span class="text-base font-semibold">{{ option.label }}</span>
+              </div>
+            </UButton>
+          </div>
+        </UFormField>
       </div>
     </div>
   </UContainer>

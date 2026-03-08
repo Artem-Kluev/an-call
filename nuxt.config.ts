@@ -13,9 +13,9 @@ export default defineNuxtConfig({
     defaultLocale: "uk",
     detectBrowserLanguage: false,
     locales: [
-      { code: "uk", iso: "uk-UA", file: "uk.json" },
-      { code: "ru", iso: "ru-RU", file: "ru.json" },
-      { code: "en", iso: "en-US", file: "en.json" },
+      { code: "uk", iso: "uk-UA", file: "uk.json", label: "Українська", icon: "i-twemoji-flag-ukraine" },
+      { code: "ru", iso: "ru-RU", file: "ru.json", label: "Русский", icon: "i-twemoji-flag-russia" },
+      { code: "en", iso: "en-US", file: "en.json", label: "English", icon: "i-twemoji-flag-united-states" },
     ],
   },
   ui: {},

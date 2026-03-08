@@ -46,14 +46,17 @@ const onSubmit = () => {
     </div>
 
     <!-- Form -->
-    <div class="flex-grow space-y-10">
+    <div class="grow space-y-10">
       <!-- Age Slider -->
       <UFormField :label="t('onboarding.fields.age.label')" size="lg">
         <div class="space-y-4">
-          <div class="mb-5 flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50 p-3">
-            <span class="text-primary text-2xl font-bold">{{ form.age }}</span>
+          <div
+            class="mb-5 flex items-center justify-between rounded-2xl border border-gray-300 bg-white p-2 dark:border-gray-800 dark:bg-gray-800/50"
+          >
+            <span class="text-primary text-xl font-bold">{{ form.age }}</span>
             <span class="text-xs font-semibold tracking-widest text-gray-400 uppercase">роки</span>
           </div>
+
           <USlider v-model="form.age" :min="18" :max="60" size="lg" color="primary" />
         </div>
       </UFormField>
