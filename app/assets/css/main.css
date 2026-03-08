@@ -1,8 +1,9 @@
 @import "tailwindcss";
+@import "@nuxt/ui";
 @import "./theme.css";
 
 @layer base {
-  html {
+  body {
     @apply bg-background text-title;
     scrollbar-gutter: stable;
 

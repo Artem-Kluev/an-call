@@ -4,13 +4,13 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
   css: ["./app/assets/css/main.css"],
-  modules: ["@nuxt/icon", "@nuxt/image", "@vueuse/nuxt", "@nuxtjs/i18n"],
+  modules: ["@nuxt/icon", "@nuxt/image", "@vueuse/nuxt", "@nuxtjs/i18n", "@nuxt/ui"],
   vite: {
     plugins: [tailwindcss()],
   },
   i18n: {
     langDir: "locales",
-    defaultLocale: "ru",
+    defaultLocale: "uk",
     detectBrowserLanguage: false,
     locales: [
       { code: "uk", iso: "uk-UA", file: "uk.json" },
@@ -18,4 +18,5 @@ export default defineNuxtConfig({
       { code: "en", iso: "en-US", file: "en.json" },
     ],
   },
+  ui: {},
 });

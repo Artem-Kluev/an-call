@@ -1,1 +1,106 @@
-{}
+{
+  "home": {
+    "title": "Dating in Your City",
+    "subtitle": "Speed dating and new connections near you",
+    "start_call": "Start Speed Dating",
+    "settings": "My Profile",
+    "location": "Your City"
+  },
+  "onboarding": {
+    "title": "Let's Get Started!",
+    "subtitle": "Tell us a bit about yourself so we can find the best matches for you",
+    "fields": {
+      "age": {
+        "label": "Your Age",
+        "placeholder": "e.g., 25"
+      },
+      "city": {
+        "label": "Your City",
+        "placeholder": "Select city"
+      },
+      "gender": {
+        "label": "Your Gender",
+        "male": "Male",
+        "female": "Female",
+        "other": "Other"
+      },
+      "seeking": {
+        "label": "Who are you looking for?",
+        "male": "Men",
+        "female": "Women",
+        "all": "Everyone"
+      },
+      "confirmation": {
+        "age_18": "I am 18 years or older"
+      }
+    },
+    "button": "Start Dating"
+  },
+  "call": {
+    "title": "Voice Roulette",
+    "subtitle": "Chat anonymously with random people",
+    "idle": {
+      "start": "Start Search"
+    },
+    "searching": {
+      "status": "Finding a partner...",
+      "cancel": "Cancel",
+      "tips": [
+        "Start the conversation with something unique: ask about the most interesting event of their day or an unusual hobby. This helps create a pleasant atmosphere immediately.",
+        "Be an active listener: ask follow-up questions and show genuine interest in your partner's thoughts. People love to feel truly heard and understood.",
+        "Anonymity is your great advantage. Don't be afraid to be sincere and open, as there are no prejudices here. It's a wonderful chance to just be yourself without masks.",
+        "If you feel an awkward pause, try telling a short funny story or ask about a recent trip or a dream. These are always great topics for a meaningful conversation.",
+        "Remember mutual respect. Even if you are very different, polite communication leaves a positive mark. A kind word can brighten the whole day for both of you.",
+        "Try to find common interests. Music, movies, sports, or even your favorite pizza — any hook can be the start of an exciting journey in your new relationship.",
+        "Voice conveys much more emotion than text. Don't be afraid to laugh and add colors to your story. Your natural energy is always very contagious and attractive!",
+        "Don't rush to conclusions in the first seconds. Sometimes the most interesting personalities reveal themselves gradually. Give the conversation a chance to surprise you.",
+        "Be confident but stay humble. Naturalness attracts much more than a constructed image. Your uniqueness is your main advantage in this anonymous chat.",
+        "If the conversation is going great, don't forget to click 'Yes, absolutely' at the end. It's the only way to keep chatting on Telegram after this session."
+      ]
+    },
+    "active": {
+      "status": "In conversation...",
+      "timer": "Remaining: {time}",
+      "partner": "Anonymous Partner",
+      "end": "End Call",
+      "lock": {
+        "instruction": "Tap triple to unlock",
+        "unlocking": "Unlocking..."
+      }
+    },
+    "decision": {
+      "title": "Exchange contacts?",
+      "like": "Yes, absolutely",
+      "decline": "No, keep searching"
+    },
+    "waiting": {
+      "title": "Waiting for response...",
+      "text": "You sent a request. The partner is currently deciding.",
+      "cancel": "Change mind"
+    },
+    "matched": {
+      "title": "It's a Match!",
+      "text": "You both liked each other. Here is your partner's Telegram:",
+      "button": "Message on Telegram"
+    },
+    "rejected": {
+      "title": "Maybe next time...",
+      "text": "The partner didn't like back or you declined the request.",
+      "button": "Try Again"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "language": {
+      "label": "Language",
+      "uk": "Ukrainian",
+      "en": "English",
+      "ru": "Russian"
+    },
+    "theme": {
+      "label": "Theme",
+      "light": "Light",
+      "dark": "Dark"
+    }
+  }
+}
