@@ -60,8 +60,8 @@
     },
     "active": {
       "status": "In conversation...",
-      "timer": "Remaining: {time}",
-      "partner": "Anonymous Partner",
+      "timer": "Time remaining:",
+      "partner": "Random partner",
       "end": "End Call",
       "lock": {
         "instruction": "Tap triple to unlock",
@@ -71,7 +71,8 @@
     "decision": {
       "title": "Exchange contacts?",
       "like": "Yes, absolutely",
-      "decline": "No, keep searching"
+      "decline": "No, keep searching",
+      "text": "Want to continue the conversation? Confirm the contact exchange — if it's mutual, you'll see your partner's Telegram username and they'll see yours, allowing you to stay in touch."
     },
     "waiting": {
       "title": "Waiting for response...",
@@ -86,7 +87,8 @@
     "rejected": {
       "title": "Maybe next time...",
       "text": "The partner didn't like back or you declined the request.",
-      "button": "Try Again"
+      "button": "Try Again",
+      "exit": "Exit"
     }
   },
   "settings": {

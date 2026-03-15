@@ -48,7 +48,7 @@ const selectedLocale = computed({
         :to="localePath('/')"
         class="flex h-12 w-12 items-center justify-center rounded-2xl border border-gray-100 bg-gray-50 transition-all hover:bg-gray-100 active:scale-90 dark:border-gray-800 dark:bg-gray-800/50"
       >
-        <UIcon name="i-heroicons-chevron-left" class="h-6 w-6" />
+        <UIcon name="material-symbols:arrow-back-ios-rounded" class="text-xl" />
       </NuxtLink>
       <h1 class="text-xl font-black">{{ t("settings.title") }}</h1>
       <div class="w-12"></div>
@@ -61,7 +61,7 @@ const selectedLocale = computed({
           v-model="selectedLocale"
           :items="locales"
           :search-input="false"
-          class="w-full rounded-2xl py-3"
+          class="w-full rounded-2xl py-4"
           size="lg"
         >
           <template #leading>
@@ -83,7 +83,7 @@ const selectedLocale = computed({
         <UFormField :label="t('onboarding.fields.age.label')" size="lg">
           <div class="space-y-4">
             <div
-              class="mb-5 flex items-center justify-between rounded-2xl border border-gray-300 bg-white p-2 dark:border-gray-800 dark:bg-gray-800/50"
+              class="mb-6 flex items-center justify-between rounded-2xl border border-gray-300 bg-white p-3 dark:border-gray-800 dark:bg-gray-800/50"
             >
               <span class="text-primary text-xl font-bold">{{ form.age }}</span>
               <span class="text-xs font-semibold tracking-widest text-gray-400 uppercase">роки</span>
@@ -98,7 +98,7 @@ const selectedLocale = computed({
             v-model="form.city"
             :items="ukraineCities"
             :placeholder="t('onboarding.fields.city.placeholder')"
-            class="w-full rounded-2xl py-3"
+            class="w-full rounded-2xl py-4"
             size="xl"
             searchable
             :search-attributes="['label']"
@@ -106,13 +106,13 @@ const selectedLocale = computed({
         </UFormField>
 
         <UFormField :label="t('onboarding.fields.gender.label')" size="lg">
-          <div class="flex gap-3">
+          <div class="flex gap-4">
             <UButton
               v-for="gender in genders"
               :key="gender.value"
               :variant="form.gender === gender.value ? 'solid' : 'outline'"
               :color="form.gender === gender.value ? 'primary' : 'neutral'"
-              class="flex flex-1 items-center justify-between rounded-2xl px-6 py-3 transition-all duration-300"
+              class="flex flex-1 items-center justify-between rounded-2xl px-6 py-4 transition-all duration-300"
               @click="form.gender = gender.value"
             >
               <div class="flex items-center gap-4">
@@ -124,13 +124,13 @@ const selectedLocale = computed({
         </UFormField>
 
         <UFormField :label="t('onboarding.fields.seeking.label')" size="lg">
-          <div class="flex gap-3">
+          <div class="flex gap-4">
             <UButton
               v-for="option in seekingOptions"
               :key="option.value"
               :variant="form.seeking === option.value ? 'solid' : 'outline'"
               :color="form.seeking === option.value ? 'primary' : 'neutral'"
-              class="flex flex-1 items-center justify-between rounded-2xl px-6 py-3 transition-all duration-300"
+              class="flex flex-1 items-center justify-between rounded-2xl px-6 py-4 transition-all duration-300"
               @click="form.seeking = option.value"
             >
               <div class="flex items-center gap-4">

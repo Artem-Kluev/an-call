@@ -14,15 +14,22 @@
     "@nuxt/image": "^2.0.0",
     "@nuxt/ui": "^4.5.0",
     "@nuxtjs/i18n": "^10.2.3",
+    "@nuxtjs/supabase": "^2.0.4",
+    "@prisma/client": "^6.19.2",
     "@tailwindcss/vite": "^4.1.18",
     "@vueuse/core": "^14.2.1",
     "@vueuse/nuxt": "^14.2.1",
+    "crypto-js": "^4.2.0",
+    "livekit-client": "^2.17.3",
+    "livekit-server-sdk": "^2.15.0",
     "nuxt": "^4.3.0",
+    "prisma": "^6.19.2",
     "tailwindcss": "^4.2.1",
     "vue": "^3.5.27",
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
     "@types/node": "^25.2.3",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2"

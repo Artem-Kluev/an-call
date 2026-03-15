@@ -38,8 +38,9 @@ onUnmounted(() => {
     <div class="flex grow flex-col items-center justify-center space-y-20 text-center">
       <div class="relative">
         <div class="bg-primary/20 absolute inset-0 animate-ping rounded-full"></div>
-        <div class="bg-primary/10 relative rounded-full p-12">
-          <UIcon name="i-heroicons-magnifying-glass" class="text-primary h-20 w-20 text-4xl" />
+
+        <div class="bg-primary/10 relative flex aspect-square w-40 items-center justify-center rounded-full">
+          <UIcon name="i-heroicons-magnifying-glass" class="text-primary text-5xl" />
         </div>
       </div>
       <h2 class="text-title animate-pulse text-xl font-bold">{{ t("call.searching.status") }}</h2>
@@ -53,7 +54,13 @@ onUnmounted(() => {
       </div>
     </div>
     <div class="flex w-full pt-8">
-      <UButton block color="error" class="rounded-2xl px-12 py-4 text-lg" @click="$emit('cancel')">
+      <UButton
+        size="xl"
+        color="error"
+        block
+        class="shadow-primary/20 rounded-full py-6 text-lg font-bold shadow-xl"
+        @click="$emit('cancel')"
+      >
         {{ t("call.searching.cancel") }}
       </UButton>
     </div>

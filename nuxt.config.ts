@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
   css: ["./app/assets/css/main.css"],
-  modules: ["@nuxt/icon", "@nuxt/image", "@vueuse/nuxt", "@nuxtjs/i18n", "@nuxt/ui"],
+  modules: ["@nuxt/icon", "@nuxt/image", "@vueuse/nuxt", "@nuxtjs/i18n", "@nuxt/ui", "@nuxtjs/supabase"],
   vite: {
     plugins: [tailwindcss()],
   },
@@ -19,4 +19,7 @@ export default defineNuxtConfig({
     ],
   },
   ui: {},
+  supabase: {
+    redirect: false,
+  },
 });

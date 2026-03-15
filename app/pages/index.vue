@@ -14,7 +14,7 @@ const { t } = useI18n();
     <!-- Main Content -->
     <div class="flex grow flex-col items-center justify-between space-y-8">
       <div class="mt-12 flex flex-col items-center space-y-8">
-        <div class="bg-primary/10 rounded-full p-8">
+        <div class="bg-primary/10 flex aspect-square w-40 items-center justify-center rounded-full">
           <UIcon name="fa7-solid:user-friends" class="text-primary h-24 w-24 text-7xl" />
         </div>
 

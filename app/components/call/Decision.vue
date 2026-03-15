@@ -6,35 +6,33 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="flex grow flex-col items-center justify-center space-y-12 px-4 text-center">
-    <div class="space-y-6">
-      <div
-        class="bg-primary/5 mx-auto flex h-24 w-24 items-center justify-center rounded-full transition-transform duration-700 hover:rotate-12"
-      >
-        <UIcon name="ic:round-telegram" class="text-primary/80 h-12 w-12 text-5xl" />
+  <div class="flex grow flex-col items-center justify-between space-y-12 text-center">
+    <div class="flex flex-col items-center space-y-6 pt-24">
+      <div class="bg-primary/10 flex aspect-square w-40 items-center justify-center rounded-full">
+        <UIcon name="mdi:telegram" class="text-primary h-24 w-24 text-7xl" />
       </div>
       <h2 class="text-title text-2xl leading-tight font-black">
         {{ t("call.decision.title") }}
       </h2>
+
+      <p class="text-subtitle text">{{ t("call.decision.text") }}</p>
     </div>
 
-    <div class="flex w-full flex-col gap-8 pt-8">
+    <div class="flex w-full flex-col gap-2 pt-8">
       <UButton
-        size="lg"
+        size="xl"
         block
-        color="primary"
-        icon="i-heroicons-sparkles-20-solid"
-        class="shadow-primary/40 hover:shadow-primary/60 rounded-2xl py-4 text-xl font-black shadow-2xl transition-all active:scale-95"
+        class="shadow-primary/20 rounded-full py-6 text-lg font-bold shadow-xl"
         @click="$emit('choice', true)"
       >
         {{ t("call.decision.like") }}
       </UButton>
       <UButton
-        size="lg"
+        size="xl"
         block
-        variant="link"
+        variant="ghost"
         color="neutral"
-        class="font-bold text-gray-400 transition-colors hover:text-gray-600"
+        class="text-subtitle rounded-full py-6 text-lg font-bold"
         @click="$emit('choice', false)"
       >
         {{ t("call.decision.decline") }}

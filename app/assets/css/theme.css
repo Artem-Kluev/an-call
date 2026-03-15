@@ -19,3 +19,25 @@
   --color-success: #10b981;
   --color-info: #3b82f6;
 }
+
+.dark {
+  /* Фон - світло-лавандовий */
+  --color-background: #f3f0ff;
+  --color-surface: #ffffff;
+
+  /* Тексти - глибокий чорнильний */
+  --color-title: #2d264d;
+  --color-subtitle: #7c749e;
+
+  /* Брендові кольори - фіолетово-рожевий мікс */
+  --color-primary: #8b5cf6;
+  --color-secondary: #a78bfa;
+  --color-accent: #f472b6;
+
+  /* Системні */
+  --color-setting: #e5e1f7;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
+  --color-success: #10b981;
+  --color-info: #3b82f6;
+}

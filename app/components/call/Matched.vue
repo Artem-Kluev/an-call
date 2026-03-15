@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { t } = useI18n();
+const localePath = useLocalePath();
 const { showToast } = useCustomToast();
 
 defineEmits<{
@@ -15,7 +16,7 @@ const handleCopy = () => {
 <template>
   <div class="flex grow flex-col">
     <div class="flex grow flex-col items-center justify-center space-y-8 px-4 text-center">
-      <div class="bg-primary/10 rounded-full p-8">
+      <div class="bg-primary/10 flex aspect-square w-40 items-center justify-center rounded-full">
         <UIcon name="mdi:checkbox-marked-circle-outline" class="text-primary h-24 w-24 text-5xl" />
       </div>
       <div class="space-y-4">
@@ -30,11 +31,19 @@ const handleCopy = () => {
         </div>
       </div>
     </div>
-    <div class="mb-6 w-full space-y-4 pt-8">
-      <UButton block class="shadow-primary/20 rounded-2xl py-4 text-lg font-bold shadow-xl">
+    <div class="flex flex-col gap-2 pt-8">
+      <UButton size="xl" block class="shadow-primary/20 rounded-full py-6 text-lg font-bold shadow-xl">
         {{ t("call.matched.button") }}
       </UButton>
-      <UButton block variant="link" color="neutral" class="w-full font-semibold text-gray-400" @click="$emit('reset')">
+
+      <UButton
+        size="xl"
+        block
+        variant="ghost"
+        color="neutral"
+        class="text-subtitle rounded-full py-6 text-lg font-bold"
+        :to="localePath('/')"
+      >
         {{ t("call.matched.exit") }}
       </UButton>
     </div>

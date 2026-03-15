@@ -9,8 +9,7 @@ defineEmits<{
   <div class="flex grow flex-col">
     <div class="flex grow flex-col items-center justify-center space-y-20 px-4 text-center">
       <div class="relative">
-        <div class="bg-primary/20 absolute inset-0 scale-150 animate-ping rounded-full"></div>
-        <div class="bg-primary/5 relative rounded-full p-10">
+        <div class="bg-primary/5 relative flex aspect-square w-40 items-center justify-center rounded-full">
           <UIcon name="material-symbols:alarm" class="text-primary h-16 w-16 animate-pulse text-5xl" />
         </div>
       </div>
