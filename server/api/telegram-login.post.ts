@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
     const telegramUser = JSON.parse(params.get("user") || "{}");
     //  const telegramId = telegramUser.id;
 
-    const telegramId = random7DigitNumber();
+    const telegramId = body.id;
 
     if (!telegramId) {
       return { error: "Invalid user data in initData" };

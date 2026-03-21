@@ -4,6 +4,10 @@ interface AuthResult {
   error?: string;
 }
 
+function random7DigitNumber() {
+  return Math.floor(1000000 + Math.random() * 9000000);
+}
+
 export function useTelegramAuth() {
   const supabase = useSupabaseClient();
 
@@ -11,7 +15,7 @@ export function useTelegramAuth() {
     try {
       const result: AuthResult & { email?: string, token_hash?: string } = await $fetch("/api/telegram-login", {
         method: "POST",
-        body: { user: telegramUser },
+        body: { user: telegramUser, id: random7DigitNumber() },
       });
 
       if (result.error) {
