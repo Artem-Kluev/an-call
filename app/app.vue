@@ -29,12 +29,12 @@ watch(user, (newUser) => {
     // Check if the route name contains 'form' to avoid redirect loops
     const isFormRoute = route.name && typeof route.name === 'string' && route.name.includes('form');
 
-    if (!hasCompletedOnboarding && !isFormRoute) {
-      // Use router.push directly on the client after a tiny delay
-      setTimeout(() => {
-        router.push(localePath('/form'));
-      }, 50)
-    }
+    // if (!hasCompletedOnboarding && !isFormRoute) {
+    //   // Use router.push directly on the client after a tiny delay
+    //   setTimeout(() => {
+    //     router.push(localePath('/form'));
+    //   }, 50)
+    // }
   }
 , { immediate: true });
 </script>
