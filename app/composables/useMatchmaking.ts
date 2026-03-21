@@ -11,14 +11,16 @@ export const useMatchmaking = () => {
     if (!userId) return null
 
     console.log("Starting search with profile:", profile, "UserId:", userId)
-
+    //@ts-ignore
     const { data, error } = await supabase.rpc('find_match_v2', {
       p_user_id: userId,
-      p_gender: profile.gender,
-      p_search_for: profile.search_for,
-      p_city: profile.city,
-      p_age: profile.age
+
     })
+
+      //     p_gender: profile.gender,
+      // p_search_for: profile.search_for,
+      // p_city: profile.city,
+      // p_age: profile.age
 
     if (error) {
       console.error("Matchmaking RPC error:", error)

@@ -16,7 +16,7 @@ export function useTelegramAuth() {
     try {
       const result: AuthResult & { email?: string, token_hash?: string } = await $fetch("/api/telegram-login", {
         method: "POST",
-        body: { user: telegramUser, id: random7DigitNumber() },
+        body: { user: telegramUser },
       });
 
       if (result.error) {

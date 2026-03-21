@@ -18,9 +18,9 @@ export default defineEventHandler(async (event) => {
     // Парсимо дані користувача з рядка ініціалізації
     const params = new URLSearchParams(initDataString);
     const telegramUser = JSON.parse(params.get("user") || "{}");
-    //  const telegramId = telegramUser.id;
+     const telegramId = telegramUser.id;
 
-    const telegramId = body.id;
+    // const telegramId = body.id;
 
     if (!telegramId) {
       return { error: "Invalid user data in initData" };
