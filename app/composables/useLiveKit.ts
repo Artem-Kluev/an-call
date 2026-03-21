@@ -9,6 +9,7 @@ export const useLiveKit = () => {
         audioPreset: { maxBitrate: 24000 },
     },
   })
+  const isMicrophoneEnabled = ref(false)
   const isConnected = ref(false)
 
   // Автоматично програємо звук співрозмовника
@@ -19,9 +20,21 @@ export const useLiveKit = () => {
     }
   })
 
+  const setMicrophoneEnabled = async (enabled: boolean) => {
+    try {
+      await room.localParticipant.setMicrophoneEnabled(enabled)
+      isMicrophoneEnabled.value = enabled
+    } catch (e) {
+      console.error("Failed to set microphone state", e)
+    }
+  }
+
+  const toggleMicrophone = async () => {
+    await setMicrophoneEnabled(!isMicrophoneEnabled.value)
+  }
+
   const join = async (roomName: string) => {
     const identity = user.value?.sub 
-
     
     const { token } = await $fetch<{ token: string }>('/api/token', {
       params: { room: roomName, identity }
@@ -30,17 +43,14 @@ export const useLiveKit = () => {
     await room.connect(config.public.livekitUrl as string, token)
     
     // Спробуємо підключити лише мікрофон, якщо камери немає:
-    try {
-      await room.localParticipant.setMicrophoneEnabled(true)
-    } catch (e) {
-      console.warn("Мікрофон не знайдено або доступ заборонено", e)
-    }
+    await setMicrophoneEnabled(true)
     isConnected.value = true
   }
 
   const leave = async () => {
     await room.disconnect()
     isConnected.value = false
+    isMicrophoneEnabled.value = false
     // Очищення аудіо-тегів (опціонально, але бажано)
     document.querySelectorAll('audio').forEach(el => el.remove())
   }
@@ -73,5 +83,5 @@ export const useLiveKit = () => {
 
   onUnmounted(leave)
 
-  return { join, leave, isConnected, sendMessage, onMessage, onPartnerLeave, room }
+  return { join, leave, isConnected, sendMessage, onMessage, onPartnerLeave, isMicrophoneEnabled, setMicrophoneEnabled, toggleMicrophone, room }
 }

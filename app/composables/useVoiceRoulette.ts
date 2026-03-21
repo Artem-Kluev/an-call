@@ -32,6 +32,8 @@ export const useVoiceRoulette = () => {
     if (data.type === 'decision') {
       partnerDecision.value = data.liked
       checkFinalResult()
+    } else if (data.type === 'end') {
+      endCall(false)
     }
   })
 
@@ -85,8 +87,13 @@ export const useVoiceRoulette = () => {
     router.push(localePath("/"))
   }
 
-  const endCall = () => {
+  const endCall = (sendMessage: boolean = true) => {
     state.value = "decision"
+    liveKit.setMicrophoneEnabled(false)
+    
+    if (sendMessage) {
+      liveKit.sendMessage({ type: 'end' })
+    }
   }
 
   const makeDecision = async (liked: boolean) => {
