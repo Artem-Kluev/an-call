@@ -5,7 +5,7 @@ export type CallState = "searching" | "active" | "decision" | "waiting" | "match
 
 export const useVoiceRoulette = () => {
   const state = ref<CallState>("searching")
-  const partnerDecision = ref<boolean | null>(null)
+  const partnerDecision = ref<string | null | undefined>(undefined)
   const myDecision = ref<boolean | null>(null)
   
   const { startSearch, stopMatchmaking, matchResult } = useMatchmaking()
@@ -29,11 +29,16 @@ export const useVoiceRoulette = () => {
 
   // Слухаємо повідомлення з Data Channel LiveKit
   liveKit.onMessage((data) => {
+    console.log("Received message:", data)
+
     if (data.type === 'decision') {
       partnerDecision.value = data.liked
       checkFinalResult()
-    } else if (data.type === 'end') {
+    } 
+    
+    if (data.type === 'end') {
       endCall(false)
+
     }
   })
 
@@ -43,21 +48,21 @@ export const useVoiceRoulette = () => {
       endCall()
     } else if (state.value === 'decision' || state.value === 'waiting') {
       // Якщо партнер відключився до свого рішення - вважаємо це відмовою
-      partnerDecision.value = false
+      partnerDecision.value = null
       checkFinalResult()
     }
   })
 
   const checkFinalResult = () => {
     // Якщо обидва зробили вибір
-    if (myDecision.value !== null && partnerDecision.value !== null) {
-      if (myDecision.value && partnerDecision.value) {
+    if (myDecision.value !== null && partnerDecision.value !== undefined) {
+      if (myDecision.value && partnerDecision.value !== null) {
         state.value = "matched"
       } else {
         state.value = "rejected"
       }
       liveKit.leave()
-    } else if (myDecision.value !== null && partnerDecision.value === null) {
+    } else if (myDecision.value !== null && partnerDecision.value === undefined) {
       state.value = "waiting"
     }
   }
@@ -66,7 +71,7 @@ export const useVoiceRoulette = () => {
     state.value = "searching"
     matchResult.value = null
     myDecision.value = null
-    partnerDecision.value = null
+    partnerDecision.value = undefined
     
     // Переконуємось що ми вийшли з попередньої кімнати
     await liveKit.leave()
@@ -90,7 +95,7 @@ export const useVoiceRoulette = () => {
   const endCall = (sendMessage: boolean = true) => {
     state.value = "decision"
     liveKit.setMicrophoneEnabled(false)
-    
+
     if (sendMessage) {
       liveKit.sendMessage({ type: 'end' })
     }
@@ -100,11 +105,18 @@ export const useVoiceRoulette = () => {
     myDecision.value = liked
     
     // Відправляємо наш вибір співрозмовнику через LiveKit
-    await liveKit.sendMessage({ type: 'decision', liked })
-    checkFinalResult()
-    
-    // Видаляємо себе з черги
+    const nickname = metadata.value.username || "anonymous"
+    await liveKit.sendMessage({ type: 'decision', liked: liked ? nickname : null })
+
     await stopMatchmaking()
+    
+    if(!liked){
+      router.push(localePath("/"))
+    }else{
+      checkFinalResult()
+    }
+    
+
   }
 
   const cancelWaiting = () => {
@@ -125,6 +137,7 @@ export const useVoiceRoulette = () => {
 
   return {
     state,
+    partnerDecision,
     beginSearch,
     cancelSearch,
     endCall,

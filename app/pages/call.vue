@@ -9,6 +9,7 @@ import CallRejected from "~/components/call/Rejected.vue";
 
 const { 
   state, 
+  partnerDecision,
   beginSearch, 
   cancelSearch, 
   endCall, 
@@ -29,7 +30,7 @@ onMounted(() => {
     <CallActive v-else-if="state === 'active'" @end="endCall" @skip="skipPartner" />
     <CallDecision v-else-if="state === 'decision'" @choice="makeDecision" />
     <CallWaiting v-else-if="state === 'waiting'" @cancel="cancelWaiting" />
-    <CallMatched v-else-if="state === 'matched'" @reset="resetFlow" />
+    <CallMatched v-else-if="state === 'matched'" :username="partnerDecision" @reset="resetFlow" />
     <CallRejected v-else-if="state === 'rejected'" @reset="resetFlow" />
   </UContainer>
 </template>

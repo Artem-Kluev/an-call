@@ -3,14 +3,24 @@ const { t } = useI18n();
 const localePath = useLocalePath();
 const { showToast } = useCustomToast();
 
-defineEmits<{
-  (e: "reset"): void;
+const props = defineProps<{
+  username?: string | null;
 }>();
 
+const formattedUsername = computed(() => {
+  if (!props.username) return "anonymous";
+  return props.username.startsWith("@") ? props.username : `@${props.username}`;
+});
+
 const handleCopy = () => {
-  navigator.clipboard.writeText("@anonymous_crush");
+  navigator.clipboard.writeText(formattedUsername.value);
   showToast(t("call.matched.copied"), "success");
 };
+
+const telegramUrl = computed(() => {
+  const pureUsername = props.username?.replace("@", "") || "";
+  return `https://t.me/${pureUsername}`;
+});
 </script>
 
 <template>
@@ -27,12 +37,18 @@ const handleCopy = () => {
           class="text-primary bg-primary/5 active:bg-primary/10 flex cursor-pointer items-center justify-center gap-3 rounded-3xl p-6 text-2xl font-black tracking-wider transition-all active:scale-95"
           @click="handleCopy"
         >
-          @anonymous_crush
+          {{ formattedUsername }}
         </div>
       </div>
     </div>
     <div class="flex flex-col gap-2 pt-8">
-      <UButton size="xl" block class="shadow-primary/20 rounded-full py-6 text-lg font-bold shadow-xl">
+      <UButton 
+        size="xl" 
+        block 
+        class="shadow-primary/20 rounded-full py-6 text-lg font-bold shadow-xl"
+        :to="telegramUrl"
+        target="_blank"
+      >
         {{ t("call.matched.button") }}
       </UButton>
 

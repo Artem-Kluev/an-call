@@ -3,6 +3,7 @@ export interface UserMetadata {
   city?: string;
   gender?: string;
   seeking?: string;
+  username?: string;
 }
 
 export const useUserMetadata = () => {
