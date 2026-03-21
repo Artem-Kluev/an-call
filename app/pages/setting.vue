@@ -99,7 +99,7 @@ const selectedLocale = computed({
         </USelectMenu>
       </UFormField>
 
-      <UDivider />
+      <USeparator />
 
       <!-- Profile Form (Existing) -->
       <div class="space-y-8">

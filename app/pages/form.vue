@@ -7,19 +7,20 @@ const { metadata, updateMetadata } = useUserMetadata();
 const isSubmitting = ref(false);
 
 const form = ref({
-  age: metadata.value.age || 18,
-  city: metadata.value.city || "Київ",
-  gender: metadata.value.gender || "",
-  seeking: metadata.value.seeking || "",
+  age: 18,
+  city: "Київ",
+  gender: "",
+  seeking: "",
   is18: false,
 });
 
-watch(() => metadata.value, (newMeta) => {
+// Sync form with metadata when it becomes available
+watch(metadata, (newMeta) => {
   if (newMeta && Object.keys(newMeta).length > 0) {
-    form.value.age = newMeta.age || form.value.age;
-    form.value.city = newMeta.city || form.value.city;
-    form.value.gender = newMeta.gender || form.value.gender;
-    form.value.seeking = newMeta.seeking || form.value.seeking;
+    if (newMeta.age) form.value.age = newMeta.age;
+    if (newMeta.city) form.value.city = newMeta.city;
+    if (newMeta.gender) form.value.gender = newMeta.gender;
+    if (newMeta.seeking) form.value.seeking = newMeta.seeking;
   }
 }, { immediate: true });
 

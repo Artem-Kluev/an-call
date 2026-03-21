@@ -9,12 +9,10 @@ export const useMatchmaking = () => {
 
   const startSearch = async (profile: { gender: string, search_for: string, city: string, age: number }) => {
     // Важливо: використовуємо .id
-    console.log(user.value)
     const userId = user.value?.sub
 
     if (!userId) return null
 
-    console.log(user.value?.sub)
 
     const { data, error } = await supabase.rpc('find_match_v2', {
       p_user_id: userId,

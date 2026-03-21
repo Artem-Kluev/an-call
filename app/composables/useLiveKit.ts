@@ -22,7 +22,6 @@ export const useLiveKit = () => {
   const join = async (roomName: string) => {
     const identity = user.value?.sub 
 
-    console.log('identity', identity)
     
     const { token } = await $fetch<{ token: string }>('/api/token', {
       params: { room: roomName, identity }

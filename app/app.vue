@@ -13,30 +13,32 @@ const localePath = useLocalePath();
 const route = useRoute();
 const router = useRouter();
 
-// login(initData);
 
-login(initData);
+const isLogin = await login(initData);
 
-// Reactively watch for the user to be populated after login completes
-watch(user, (newUser) => {
-  console.log(user)
+// Stable check for onboarding completion
+const needsOnboarding = computed(() => {
+  if (!user.value || !user.value.user_metadata) return true;
+  const meta = user.value.user_metadata;
+  console.log(meta);
+  return !(meta.age && meta.city && meta.gender && meta.seeking);
+});
 
-    if (!user.value || !user.value.user_metadata) return;
-  
-    const meta = user.value.user_metadata || {};
-    const hasCompletedOnboarding = !!(meta.age && meta.city && meta.gender && meta.seeking);
+// Redirect logic that triggers only when the onboarding status changes
+watch(
+  [needsOnboarding, () => route.path], 
+  ([needs, currentPath]) => {
+    if (!isLogin.success) return;
     
-    // Check if the route name contains 'form' to avoid redirect loops
-    const isFormRoute = route.name && typeof route.name === 'string' && route.name.includes('form');
+    // Check if we are already on the form page to avoid redirect loops
+    const isFormRoute = currentPath.includes('form');
 
-    if (!hasCompletedOnboarding && !isFormRoute) {
-      // Use router.push directly on the client after a tiny delay
-      setTimeout(() => {
-        router.push(localePath('/form'));
-      }, 50)
+    if (needs && !isFormRoute) {
+      router.push(localePath('/form'));
     }
-  }
-, { immediate: true });
+  }, 
+  { immediate: true }
+);
 </script>
 
 <template>

@@ -20,7 +20,7 @@ export const verifyTelegramWebAppData = (telegramInitData: string) => {
   const secret = CryptoJS.HmacSHA256(process.env.TG_BOT!, "WebAppData");
   const _hash = CryptoJS.HmacSHA256(dataToCheck.join("\n"), secret).toString(CryptoJS.enc.Hex);
 
-  console.log(hash === _hash);
+
   return true;
   return hash === _hash;
 };

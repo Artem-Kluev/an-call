@@ -10,12 +10,10 @@ export const useUserMetadata = () => {
   const supabase = useSupabaseClient()
 
   const metadata = computed<UserMetadata>(() => {
-    console.log(user.value)
     return (user.value?.user_metadata as UserMetadata) || {}
   })
 
   const updateMetadata = async (data: Partial<UserMetadata>) => {
-    console.log(user.value)
     if (!user.value) {
       return { error: new Error('User not logged in') }
     }
@@ -28,21 +26,15 @@ export const useUserMetadata = () => {
         data: updatedMetadata
       })
 
-      console.log(responseData)
 
       if (error) {
         return { error: new Error(error.message) }
       }
 
-      // Supabase's updateUser doesn't always trigger reactivity for useSupabaseUser()
-      // so we manually apply it to our local ref.
-      if (user.value) {
-        user.value.user_metadata = updatedMetadata;
-        // Also update the app_metadata for compatibility with older code if needed
-        user.value.app_metadata = {
-          ...user.value.app_metadata,
-          ...updatedMetadata
-        };
+      // Update the reactive user state with the data returned from the server
+      if (responseData?.user) {
+
+        await supabase.auth.refreshSession()
       }
 
       return { data: responseData?.user, error: null }
