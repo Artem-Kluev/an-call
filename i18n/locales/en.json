@@ -63,6 +63,7 @@
       "timer": "Time remaining:",
       "partner": "Random partner",
       "end": "End Call",
+      "skip": "Next",
       "lock": {
         "instruction": "Tap triple to unlock",
         "unlocking": "Unlocking..."

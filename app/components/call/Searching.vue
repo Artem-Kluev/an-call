@@ -8,19 +8,11 @@ const emit = defineEmits<{
 }>();
 
 const totalTips = 10;
-const currentTipIndex = ref(Math.floor(Math.random() * totalTips));
-const searchTimer = ref(0);
-let searchInterval: any = null;
+const currentTipIndex = ref(0);
 let tipsInterval: any = null;
 
 onMounted(() => {
-  searchInterval = setInterval(() => {
-    searchTimer.value++;
-    if (searchTimer.value >= 3) {
-      clearInterval(searchInterval);
-      emit("matched");
-    }
-  }, 1000);
+  currentTipIndex.value = Math.floor(Math.random() * totalTips);
 
   tipsInterval = setInterval(() => {
     currentTipIndex.value = (currentTipIndex.value + 1) % totalTips;
@@ -28,7 +20,6 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  clearInterval(searchInterval);
   clearInterval(tipsInterval);
 });
 </script>

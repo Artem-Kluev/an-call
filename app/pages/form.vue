@@ -3,17 +3,29 @@ import { ukraineCities } from "~/utils/ukraineCities";
 const { t } = useI18n();
 const localePath = useLocalePath();
 
+const { metadata, updateMetadata } = useUserMetadata();
+const isSubmitting = ref(false);
+
 const form = ref({
-  age: 18,
-  city: "Київ",
-  gender: "",
-  seeking: "",
+  age: metadata.value.age || 18,
+  city: metadata.value.city || "Київ",
+  gender: metadata.value.gender || "",
+  seeking: metadata.value.seeking || "",
   is18: false,
 });
 
+watch(() => metadata.value, (newMeta) => {
+  if (newMeta && Object.keys(newMeta).length > 0) {
+    form.value.age = newMeta.age || form.value.age;
+    form.value.city = newMeta.city || form.value.city;
+    form.value.gender = newMeta.gender || form.value.gender;
+    form.value.seeking = newMeta.seeking || form.value.seeking;
+  }
+}, { immediate: true });
+
 const genders = [
   { value: "male", label: t("onboarding.fields.gender.male"), icon: "tabler:man" },
-  { value: "female", label: t("onboarding.fields.gender.female"), icon: "streamline-plump:toilet-sign-man " },
+  { value: "female", label: t("onboarding.fields.gender.female"), icon: "streamline-plump:toilet-sign-man" },
 ];
 
 const seekingOptions = [
@@ -25,10 +37,22 @@ const isFormValid = computed(() => {
   return form.value.age >= 18 && form.value.city && form.value.gender && form.value.seeking && form.value.is18;
 });
 
-const onSubmit = () => {
+const onSubmit = async () => {
   if (isFormValid.value) {
-    console.log("Form submitted:", form.value);
-    navigateTo(localePath("/"));
+    isSubmitting.value = true;
+    const { error } = await updateMetadata({
+      age: form.value.age,
+      city: form.value.city,
+      gender: form.value.gender,
+      seeking: form.value.seeking
+    });
+    isSubmitting.value = false;
+    
+    if (!error) {
+      navigateTo(localePath("/"));
+    } else {
+      console.error("Failed to update metadata", error);
+    }
   }
 };
 </script>
@@ -51,7 +75,7 @@ const onSubmit = () => {
       <UFormField :label="t('onboarding.fields.age.label')" size="lg">
         <div class="space-y-4">
           <div
-            class="mb-5 flex items-center justify-between rounded-2xl border border-gray-300 bg-white p-2 dark:border-gray-800 dark:bg-gray-800/50"
+            class="mb-5 flex items-center justify-between rounded-2xl border border-gray-300 bg-white p-2"
           >
             <span class="text-primary text-xl font-bold">{{ form.age }}</span>
             <span class="text-xs font-semibold tracking-widest text-gray-400 uppercase">роки</span>
@@ -120,7 +144,7 @@ const onSubmit = () => {
 
     <!-- CTA -->
     <div class="mt-auto">
-      <UButton size="xl" block :disabled="!isFormValid" class="rounded-2xl py-5 text-lg font-bold" @click="onSubmit">
+      <UButton size="xl" block :disabled="!isFormValid" :loading="isSubmitting" class="rounded-2xl py-5 text-lg font-bold" @click="onSubmit">
         {{ t("onboarding.button") }}
       </UButton>
     </div>

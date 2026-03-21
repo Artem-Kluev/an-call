@@ -7,6 +7,9 @@ export default defineNuxtConfig({
   modules: ["@nuxt/icon", "@nuxt/image", "@vueuse/nuxt", "@nuxtjs/i18n", "@nuxt/ui", "@nuxtjs/supabase"],
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      allowedHosts: true
+    }
   },
   i18n: {
     langDir: "locales",
@@ -18,8 +21,18 @@ export default defineNuxtConfig({
       { code: "en", iso: "en-US", file: "en.json", label: "English", icon: "i-twemoji-flag-united-states" },
     ],
   },
-  ui: {},
+  colorMode: {
+    preference: 'light',
+    fallback: 'light',
+    classSuffix: '',
+    storageKey: 'nuxt-color-mode-disabled',
+  },
   supabase: {
     redirect: false,
   },
+  runtimeConfig: {
+    public: {
+      livekitUrl: '' // overridden by NUXT_PUBLIC_LIVEKIT_URL
+    }
+  }
 });

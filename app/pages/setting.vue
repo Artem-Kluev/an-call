@@ -4,13 +4,36 @@ const { t, locale, locales, setLocale } = useI18n();
 const localePath = useLocalePath();
 const colorMode = useColorMode();
 
+const { metadata, updateMetadata } = useUserMetadata();
+
 const form = ref({
-  age: 18,
-  city: "Київ",
-  gender: "",
-  seeking: "",
+  age: metadata.value.age || 18,
+  city: metadata.value.city || "Київ",
+  gender: metadata.value.gender || "",
+  seeking: metadata.value.seeking || "",
   is18: false,
 });
+
+watch(() => metadata.value, (newMeta) => {
+  if (newMeta && Object.keys(newMeta).length > 0) {
+    // Only update if the form seems untouched to prevent sudden resets
+    if (form.value.age === 18 && !form.value.gender && !form.value.seeking) {
+      form.value.age = newMeta.age || form.value.age;
+      form.value.city = newMeta.city || form.value.city;
+      form.value.gender = newMeta.gender || form.value.gender;
+      form.value.seeking = newMeta.seeking || form.value.seeking;
+    }
+  }
+}, { immediate: true });
+
+watchDebounced(form, async (newForm) => {
+  await updateMetadata({
+    age: newForm.age,
+    city: newForm.city,
+    gender: newForm.gender,
+    seeking: newForm.seeking
+  });
+}, { deep: true, debounce: 500, maxWait: 2000 });
 
 const genders = [
   { value: "male", label: t("onboarding.fields.gender.male"), icon: "tabler:man" },

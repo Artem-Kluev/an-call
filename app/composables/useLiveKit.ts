@@ -1,100 +1,78 @@
-import { ref, onUnmounted } from 'vue'
-import { 
-  Room, 
-  RoomEvent, 
-  Track, 
-  RemoteParticipant, 
-  RemoteTrackPublication, 
-  RemoteTrack 
-} from 'livekit-client'
+import { Room, RoomEvent, Track, RemoteTrack } from 'livekit-client'
 
 export const useLiveKit = () => {
   const config = useRuntimeConfig()
-  const room = new Room()
-  
+  const user = useSupabaseUser()
+  const room = new Room({
+    adaptiveStream: true,
+    publishDefaults: {
+        audioPreset: { maxBitrate: 24000 },
+    },
+  })
   const isConnected = ref(false)
-  const isConnecting = ref(false)
-  const participants = ref<RemoteParticipant[]>([])
-  const audioTracks = new Map<string, HTMLAudioElement>()
 
-  // Обробка підписки на треки (звук співрозмовника)
+  // Автоматично програємо звук співрозмовника
   room.on(RoomEvent.TrackSubscribed, (track: RemoteTrack) => {
     if (track.kind === Track.Kind.Audio) {
-      const element = track.attach()
-      document.body.appendChild(element)
-      audioTracks.set(track.sid, element)
+      const el = track.attach()
+      document.body.appendChild(el)
     }
   })
 
-  // Обробка відписки (коли юзер виходить)
-  room.on(RoomEvent.TrackUnsubscribed, (track: RemoteTrack) => {
-    const element = audioTracks.get(track.sid)
-    if (element) {
-      element.remove()
-      audioTracks.delete(track.sid)
-    }
-  })
+  const join = async (roomName: string) => {
+    const identity = user.value?.sub 
 
-  // Оновлення списку учасників
-  const updateParticipants = () => {
-    participants.value = Array.from(room.participants.values())
-  }
+    console.log('identity', identity)
+    
+    const { token } = await $fetch<{ token: string }>('/api/token', {
+      params: { room: roomName, identity }
+    })
 
-  room.on(RoomEvent.ParticipantConnected, updateParticipants)
-  room.on(RoomEvent.ParticipantDisconnected, updateParticipants)
-
-  /**
-   * Універсальна функція для входу в кімнату.
-   * У LiveKit немає різниці між "створити" і "приєднатися" на клієнті:
-   * Якщо кімнати не існує — вона створиться автоматично при першому вході.
-   */
-  const join = async (roomName: string, userSub: string) => {
-    if (isConnecting.value || isConnected.value) return
-
-    isConnecting.value = true
+    await room.connect(config.public.livekitUrl as string, token)
+    
+    // Спробуємо підключити лише мікрофон, якщо камери немає:
     try {
-      // 1. Отримуємо токен через наш Nitro API
-      const { token } = await $fetch('/api/livekit/token', {
-        params: { room: roomName, identity: userSub }
-      })
-
-      // 2. Підключаємося до сервера
-      await room.connect(config.public.livekitUrl, token)
-      
-      // 3. Публікуємо свій мікрофон
-      await room.localParticipant.enableCameraAndMicrophone()
-      
-      isConnected.value = true
-      updateParticipants()
-      console.log(`Успішно приєднано до кімнати: ${roomName}`)
-    } catch (error) {
-      console.error('LiveKit connection error:', error)
-      throw error
-    } finally {
-      isConnecting.value = false
+      await room.localParticipant.setMicrophoneEnabled(true)
+    } catch (e) {
+      console.warn("Мікрофон не знайдено або доступ заборонено", e)
     }
+    isConnected.value = true
   }
 
   const leave = async () => {
     await room.disconnect()
     isConnected.value = false
-    participants.value = []
-    // Видаляємо всі аудіо елементи з DOM
-    audioTracks.forEach(el => el.remove())
-    audioTracks.clear()
+    // Очищення аудіо-тегів (опціонально, але бажано)
+    document.querySelectorAll('audio').forEach(el => el.remove())
   }
 
-  // Автоматичне відключення при знищенні компонента
-  onUnmounted(() => {
-    leave()
-  })
-
-  return {
-    join,
-    leave,
-    isConnected,
-    isConnecting,
-    participants,
-    localParticipant: room.localParticipant
+  const sendMessage = async (payload: any) => {
+    if (!isConnected.value) return;
+    const strData = JSON.stringify(payload);
+    const encoder = new TextEncoder();
+    await room.localParticipant.publishData(encoder.encode(strData), { reliable: true });
   }
+
+  const onMessage = (callback: (payload: any, participant?: any) => void) => {
+    room.on(RoomEvent.DataReceived, (payload, participant) => {
+      try {
+        const decoder = new TextDecoder();
+        const strData = decoder.decode(payload);
+        const data = JSON.parse(strData);
+        callback(data, participant);
+      } catch (e) {
+        console.error("Failed to parse LiveKit message", e);
+      }
+    });
+  }
+
+  const onPartnerLeave = (callback: () => void) => {
+    room.on(RoomEvent.ParticipantDisconnected, () => {
+      callback();
+    });
+  }
+
+  onUnmounted(leave)
+
+  return { join, leave, isConnected, sendMessage, onMessage, onPartnerLeave, room }
 }

@@ -4,9 +4,10 @@ const { t } = useI18n();
 
 const emit = defineEmits<{
   (e: "end"): void;
+  (e: "skip"): void;
 }>();
 
-const timer = ref(180); // 3 minutes in seconds
+const timer = ref(1800); // 3 minutes in seconds
 let timerInterval: any = null;
 
 const isLocked = ref(false);
@@ -83,14 +84,25 @@ onUnmounted(() => {
         {{ formattedTime }}
       </div>
 
-      <UButton
-        color="error"
-        variant="soft"
-        class="shadow-error/20 active:bg-error active:text-background mx-auto flex h-22 w-22 items-center justify-center rounded-full shadow-lg active:scale-95"
-        @click="$emit('end')"
-      >
-        <UIcon name="i-heroicons-phone-x-mark" class="h-10 w-10 text-2xl" />
-      </UButton>
+      <div class="flex justify-center gap-6">
+        <UButton
+          color="error"
+          variant="soft"
+          class="shadow-error/20 active:bg-error active:text-background flex h-22 w-22 items-center justify-center rounded-full shadow-lg active:scale-95"
+          @click="$emit('end')"
+        >
+          <UIcon name="i-heroicons-phone-x-mark" class="h-10 w-10 text-2xl" />
+        </UButton>
+
+        <UButton
+          color="primary"
+          variant="soft"
+          class="shadow-primary/20 active:bg-primary active:text-background flex h-22 w-22 items-center justify-center rounded-full shadow-lg active:scale-95"
+          @click="$emit('skip')"
+        >
+          <UIcon name="i-heroicons-forward" class="h-10 w-10 text-2xl" />
+        </UButton>
+      </div>
     </div>
 
     <!-- Lock Screen Overlay -->

@@ -5,43 +5,40 @@ interface AuthResult {
 }
 
 export function useTelegramAuth() {
-  const user = ref<any>(null);
-  const isNew = ref<boolean>(false);
-  const error = ref<string | null>(null);
-  const loading = ref(false);
-
   const supabase = useSupabaseClient();
 
   const login = async (telegramUser: string) => {
-    loading.value = true;
-    error.value = null;
-
     try {
-      const result: AuthResult = await $fetch("/api/telegram-login", {
+      const result: AuthResult & { email?: string, token_hash?: string } = await $fetch("/api/telegram-login", {
         method: "POST",
         body: { user: telegramUser },
       });
 
       if (result.error) {
-        error.value = result.error;
-        loading.value = false;
-        return;
+        console.error("Telegram login error:", result.error);
+        return { success: false, error: result.error };
       }
 
-      user.value = result.user;
-      isNew.value = !!result.isNew;
+      // 🔐 Виконуємо вхід через верифікацію OTP токену для отримання JWT сесії (Passwordless)
+      if (result.email && result.token_hash) {
+        const { data: authData, error: authError } = await supabase.auth.verifyOtp({
+          token_hash: result.token_hash,
+          type: 'magiclink'
+        });
+        
+        if (authError) throw authError;
+      }
+      
+      return { 
+        success: true, 
+        user: result.user, 
+        isNew: !!result.isNew 
+      };
     } catch (err: any) {
-      error.value = err.message || "Unknown error";
-    } finally {
-      loading.value = false;
+      console.error("Unexpected login error:", err);
+      return { success: false, error: err.message || "Unknown error" };
     }
   };
 
-  return {
-    user,
-    isNew,
-    error,
-    loading,
-    login,
-  };
+  return { login };
 }

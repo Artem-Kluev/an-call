@@ -20,7 +20,12 @@
   --color-info: #3b82f6;
 }
 
-.dark {
+/* Жорстко забороняємо браузеру вмикати темну тему за замовчуванням */
+:root, html, body {
+  color-scheme: light !important;
+}
+
+.dark-mode {
   /* Фон - світло-лавандовий */
   --color-background: #f3f0ff;
   --color-surface: #ffffff;
