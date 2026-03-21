@@ -76,6 +76,7 @@ export const useVoiceRoulette = () => {
       age: metadata.value.age || 18
     }
 
+    console.log("useVoiceRoulette: beginning search with profile:", profile)
     await startSearch(profile)
   }
 
