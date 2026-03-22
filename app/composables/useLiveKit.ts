@@ -51,7 +51,7 @@ export const useLiveKit = () => {
 
     await room.connect(config.public.livekitUrl as string, token, {
       autoSubscribe: true,
-      maxRetries: 3, 
+      maxRetries: 1, 
     })
     
     // Спробуємо підключити лише мікрофон, якщо камери немає:
