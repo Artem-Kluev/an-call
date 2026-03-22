@@ -77,7 +77,7 @@ export const useVoiceRoulette = () => {
     console.log("Received message:", data)
 
     if (data.type === 'hello' && data.id) {
-      saveToHistory(data.id)
+      useCallHistory().addToHistory(data.id)
     }
 
     if (data.type === 'decision') {
@@ -177,24 +177,6 @@ export const useVoiceRoulette = () => {
 
   const resetFlow = async () => {
     await beginSearch()
-  }
-
-  
-  const saveToHistory = (partnerId: string) => {
-    if (!import.meta.client) return
-
-    console.log("saveToHistory: partnerId", partnerId)
-    if (!partnerId) return
-
-    try {
-      const history = JSON.parse(localStorage.getItem('history_ids') || '[]')
-      if (Array.isArray(history) && !history.includes(partnerId)) {
-        history.push(partnerId)
-        localStorage.setItem('history_ids', JSON.stringify(history))
-      }
-    } catch (e) {
-      console.error("Failed to save to history_ids", e)
-    }
   }
 
   return {
