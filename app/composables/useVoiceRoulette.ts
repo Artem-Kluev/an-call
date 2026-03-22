@@ -61,7 +61,7 @@ export const useVoiceRoulette = () => {
       } else {
         state.value = "rejected"
       }
-      liveKit.leave()
+      // liveKit.leave()
     } else if (myDecision.value !== null && partnerDecision.value === undefined) {
       state.value = "waiting"
     }
@@ -125,12 +125,6 @@ export const useVoiceRoulette = () => {
     stopMatchmaking()
   }
 
-  const skipPartner = async () => {
-    await liveKit.leave()
-    await stopMatchmaking()
-    await beginSearch()
-  }
-
   const resetFlow = async () => {
     await beginSearch()
   }
@@ -143,7 +137,6 @@ export const useVoiceRoulette = () => {
     endCall,
     makeDecision,
     cancelWaiting,
-    resetFlow,
-    skipPartner
+    resetFlow
   }
 }

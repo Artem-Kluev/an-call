@@ -4,7 +4,6 @@ const { t } = useI18n();
 
 const emit = defineEmits<{
   (e: "end"): void;
-  (e: "skip"): void;
 }>();
 
 const timer = ref(1800); // 3 minutes in seconds
@@ -93,7 +92,7 @@ onUnmounted(() => {
         >
           <UIcon name="i-heroicons-phone-x-mark" class="h-10 w-10 text-2xl" />
         </UButton>
-
+<!-- 
         <UButton
           color="primary"
           variant="soft"
@@ -101,7 +100,7 @@ onUnmounted(() => {
           @click="$emit('skip')"
         >
           <UIcon name="i-heroicons-forward" class="h-10 w-10 text-2xl" />
-        </UButton>
+        </UButton> -->
       </div>
     </div>
 
