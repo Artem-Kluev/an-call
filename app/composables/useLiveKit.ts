@@ -6,9 +6,18 @@ export const useLiveKit = () => {
   const room = new Room({
     adaptiveStream: true,
     publishDefaults: {
-        audioPreset: { maxBitrate: 24000 },
+      audioPreset: { maxBitrate: 24000 },
+    },
+    reconnectPolicy: {
+      nextRetryDelayInMs: (context) => {
+        console.log(`Спроба перепідключення №${context.retryCount}`);
+        if (context.retryCount < 3) return 1000;
+        // Якщо за 3 спроби не вийшло, повертаємо null (кінець)
+        return null; 
+      },
     },
   })
+
   const isMicrophoneEnabled = ref(false)
   const isConnected = ref(false)
 
@@ -40,7 +49,10 @@ export const useLiveKit = () => {
       params: { room: roomName, identity }
     })
 
-    await room.connect(config.public.livekitUrl as string, token)
+    await room.connect(config.public.livekitUrl as string, token, {
+      autoSubscribe: true,
+      maxRetries: 3, 
+    })
     
     // Спробуємо підключити лише мікрофон, якщо камери немає:
     await setMicrophoneEnabled(true)

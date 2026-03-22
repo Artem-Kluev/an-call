@@ -14,8 +14,9 @@ export default defineEventHandler(async (event) => {
   const apiSecret = process.env.LIVEKIT_API_SECRET
 
   const at = new AccessToken(apiKey, apiSecret, {
-    identity: identity, // Тут буде твій user.value?.sub
-  })
+    identity: identity,
+    ttl: '24h', // Токен буде дійсний 24 години
+  });
 
   // Даємо права на вхід та публікацію звуку
   at.addGrant({ 

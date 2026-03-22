@@ -1,5 +1,6 @@
 import { ref, watch, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useWakeLock } from './useWakeLock'
 
 export type CallState = "searching" | "active" | "decision" | "waiting" | "matched" | "rejected" | "disconnected";
 
@@ -14,6 +15,7 @@ export const useVoiceRoulette = () => {
   const { metadata } = useUserMetadata()
   const localePath = useLocalePath()
   const router = useRouter()
+  const wakeLock = useWakeLock()
   const userId = user.value?.sub
   
   // Перевірка чи партнер все ще в кімнаті кожні 3 сек
@@ -136,11 +138,13 @@ export const useVoiceRoulette = () => {
     }
 
     console.log("useVoiceRoulette: beginning search with profile:", profile)
+    await wakeLock.requestWakeLock()
     await startSearch(profile)
   }
 
   const cancelSearch = async () => {
     await stopMatchmaking()
+    await wakeLock.releaseWakeLock()
     router.push(localePath("/"))
   }
 
@@ -167,15 +171,21 @@ export const useVoiceRoulette = () => {
     }else{
       checkFinalResult()
     }
+    
+    if(!liked) {
+      await wakeLock.releaseWakeLock()
+    }
   }
 
-  const cancelWaiting = () => {
+  const cancelWaiting = async () => {
     state.value = "rejected"
-    liveKit.leave()
-    stopMatchmaking()
+    await liveKit.leave()
+    await stopMatchmaking()
+    await wakeLock.releaseWakeLock()
   }
 
   const resetFlow = async () => {
+    await wakeLock.releaseWakeLock()
     await beginSearch()
   }
 
