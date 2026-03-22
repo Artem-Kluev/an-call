@@ -30,17 +30,14 @@ export const useMatchmaking = () => {
       return null
     }
 
-    console.log("Matchmaking RPC response:", data)
 
     // В Postgres функція повертає RETURNS TABLE, у JS це масив
     if (data && (data as any)[0]?.room_name) {
       const roomName = (data as any)[0].room_name
-      console.log("Match found immediately:", roomName)
       matchResult.value = { room_name: roomName }
       return roomName
     }
 
-    console.log("No immediate match, waiting for Realtime...")
     subscribeToMatch()
     initHeartbeat()
     return null
@@ -60,9 +57,7 @@ export const useMatchmaking = () => {
         table: 'matchmaking_queue',
         filter: `user_id=eq.${userId}` 
       }, (payload: any) => {
-        console.log("Received Realtime match payload:", payload)
         if (payload.new?.is_matched && payload.new?.room_id) {
-          console.log("Match found via Realtime:", payload.new.room_id)
           matchResult.value = { room_name: payload.new.room_id }
           stopMatchmaking() 
         }

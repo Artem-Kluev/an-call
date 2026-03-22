@@ -13,11 +13,9 @@ export const useWakeLock = () => {
       sentinel.value = await (navigator as any).wakeLock.request('screen')
       
       sentinel.value.addEventListener('release', () => {
-        console.log('Wake Lock was released')
         sentinel.value = null
       })
       
-      console.log('Wake Lock is active')
     } catch (err) {
       console.warn('Failed to request Wake Lock:', err)
     }
@@ -28,7 +26,6 @@ export const useWakeLock = () => {
       try {
         await sentinel.value.release()
         sentinel.value = null
-        console.log('Wake Lock released manually')
       } catch (err) {
         console.error('Failed to release Wake Lock:', err)
       }

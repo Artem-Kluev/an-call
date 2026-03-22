@@ -71,7 +71,13 @@ export const useVoiceRoulette = () => {
 
   // Коли партнер підключається до вже існуючої кімнати
   liveKit.onPartnerJoin(() => {
-    liveKit.sendMessage({ type: 'hello', id: userId })
+    if(state.value === "active"){
+      liveKit.sendMessage({ type: 'hello', id: userId })
+
+      return
+    }
+
+    liveKit.sendMessage({ type: 'error', message: 'Partner not found' })
   })
 
   // Слухаємо повідомлення з Data Channel LiveKit
@@ -138,7 +144,6 @@ export const useVoiceRoulette = () => {
       age: metadata.value.age || 18
     }
 
-    console.log("useVoiceRoulette: beginning search with profile:", profile)
     await wakeLock.requestWakeLock()
     await startSearch(profile)
   }
