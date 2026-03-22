@@ -11,10 +11,12 @@ export const useMatchmaking = () => {
     if (!userId) return null
 
     console.log("Starting search with profile:", profile, "UserId:", userId)
-    //@ts-ignore
+    const history = import.meta.client ? JSON.parse(localStorage.getItem('history_ids') || '[]') : []
+
     const { data, error } = await supabase.rpc('find_match_v2', {
       p_user_id: userId,
-
+      //@ts-ignore
+      p_excluded_ids: history
     })
 
       //     p_gender: profile.gender,

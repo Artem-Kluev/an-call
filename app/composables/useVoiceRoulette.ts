@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue'
+import { ref, watch, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 export type CallState = "searching" | "active" | "decision" | "waiting" | "matched" | "rejected" | "disconnected";
@@ -13,6 +13,42 @@ export const useVoiceRoulette = () => {
   const { metadata } = useUserMetadata()
   const localePath = useLocalePath()
   const router = useRouter()
+  
+  // Перевірка чи партнер все ще в кімнаті кожні 3 сек
+  let connectionCheckInterval: any = null
+
+  const startConnectionCheck = () => {
+    if (connectionCheckInterval) clearInterval(connectionCheckInterval)
+    connectionCheckInterval = setInterval(() => {
+      if (['active', 'decision', 'waiting'].includes(state.value)) {
+        if (liveKit.room.remoteParticipants.size === 0 && liveKit.isConnected.value) {
+          console.warn("No partner found in room, moving to disconnected state")
+          state.value = 'disconnected'
+          liveKit.leave()
+          stopConnectionCheck()
+        }
+      } else {
+        stopConnectionCheck()
+      }
+    }, 3000)
+  }
+
+  const stopConnectionCheck = () => {
+    if (connectionCheckInterval) {
+      clearInterval(connectionCheckInterval)
+      connectionCheckInterval = null
+    }
+  }
+
+  watch(state, (newState) => {
+    if (['active', 'decision', 'waiting'].includes(newState)) {
+      startConnectionCheck()
+    } else {
+      stopConnectionCheck()
+    }
+  })
+
+  onUnmounted(stopConnectionCheck)
 
   // Коли знаходимо пару - одразу переходимо в active і підключаємося до LiveKit
   watch(matchResult, async (result) => {
