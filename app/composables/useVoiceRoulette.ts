@@ -95,7 +95,7 @@ export const useVoiceRoulette = () => {
   // Якщо парнер скинув слухавку
   liveKit.onPartnerLeave(() => {
     console.log("Partner left", state.value)
-    if (state.value === 'decision' || state.value === 'waiting' || state.value === 'rejected') {
+    if (state.value === 'decision' || state.value === 'waiting' ) {
       // Якщо партнер відключився до свого рішення - вважаємо це відмовою
       partnerDecision.value = null
       checkFinalResult()
@@ -138,6 +138,7 @@ export const useVoiceRoulette = () => {
       age: metadata.value.age || 18
     }
 
+    console.log("useVoiceRoulette: beginning search with profile:", profile)
     await wakeLock.requestWakeLock()
     await startSearch(profile)
   }
