@@ -75,6 +75,12 @@ export const useLiveKit = () => {
     });
   }
 
+  const onPartnerJoin = (callback: (participant: any) => void) => {
+    room.on(RoomEvent.ParticipantConnected, (participant) => {
+      callback(participant);
+    });
+  }
+
   const onPartnerLeave = (callback: () => void) => {
     room.on(RoomEvent.ParticipantDisconnected, () => {
       callback();
@@ -83,5 +89,5 @@ export const useLiveKit = () => {
 
   onUnmounted(leave)
 
-  return { join, leave, isConnected, sendMessage, onMessage, onPartnerLeave, isMicrophoneEnabled, setMicrophoneEnabled, toggleMicrophone, room }
+  return { join, leave, isConnected, sendMessage, onMessage, onPartnerJoin, onPartnerLeave, isMicrophoneEnabled, setMicrophoneEnabled, toggleMicrophone, room }
 }

@@ -7,12 +7,14 @@ export const useVoiceRoulette = () => {
   const state = ref<CallState>("searching")
   const partnerDecision = ref<string | null | undefined>(undefined)
   const myDecision = ref<boolean | null>(null)
+  const user = useSupabaseUser()
   
-  const { startSearch, stopMatchmaking, matchResult } = useMatchmaking()
+  const { startSearch, stopMatchmaking, matchResult} = useMatchmaking()
   const liveKit = useLiveKit()
   const { metadata } = useUserMetadata()
   const localePath = useLocalePath()
   const router = useRouter()
+  const userId = user.value?.sub
   
   // Перевірка чи партнер все ще в кімнаті кожні 3 сек
   let connectionCheckInterval: any = null
@@ -56,6 +58,8 @@ export const useVoiceRoulette = () => {
       state.value = "active"
       try {
         await liveKit.join(result.room_name)
+        // Відправляємо свій ID партнеру
+        await liveKit.sendMessage({ type: 'hello', id: userId })
       } catch (e) {
         console.error("Failed to join LiveKit room", e)
         state.value = "searching" // Повертаємося до пошуку
@@ -63,9 +67,18 @@ export const useVoiceRoulette = () => {
     }
   })
 
+  // Коли партнер підключається до вже існуючої кімнати
+  liveKit.onPartnerJoin(() => {
+    liveKit.sendMessage({ type: 'hello', id: userId })
+  })
+
   // Слухаємо повідомлення з Data Channel LiveKit
   liveKit.onMessage((data) => {
     console.log("Received message:", data)
+
+    if (data.type === 'hello' && data.id) {
+      saveToHistory(data.id)
+    }
 
     if (data.type === 'decision') {
       partnerDecision.value = data.liked
@@ -74,7 +87,6 @@ export const useVoiceRoulette = () => {
     
     if (data.type === 'end') {
       endCall(false)
-
     }
   })
 
@@ -165,6 +177,24 @@ export const useVoiceRoulette = () => {
 
   const resetFlow = async () => {
     await beginSearch()
+  }
+
+  
+  const saveToHistory = (partnerId: string) => {
+    if (!import.meta.client) return
+
+    console.log("saveToHistory: partnerId", partnerId)
+    if (!partnerId) return
+
+    try {
+      const history = JSON.parse(localStorage.getItem('history_ids') || '[]')
+      if (Array.isArray(history) && !history.includes(partnerId)) {
+        history.push(partnerId)
+        localStorage.setItem('history_ids', JSON.stringify(history))
+      }
+    } catch (e) {
+      console.error("Failed to save to history_ids", e)
+    }
   }
 
   return {
