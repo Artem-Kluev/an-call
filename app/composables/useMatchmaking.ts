@@ -17,7 +17,7 @@ export const useMatchmaking = () => {
       p_user_id: userId,
       //@ts-ignore
       p_excluded_ids: history,
-      p_city: 'Kyiv'
+      p_city: profile.city
     })
 
       //     p_gender: profile.gender,
