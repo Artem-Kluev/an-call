@@ -16,7 +16,8 @@ export const useMatchmaking = () => {
     const { data, error } = await supabase.rpc('find_match_v2', {
       p_user_id: userId,
       //@ts-ignore
-      p_excluded_ids: history
+      p_excluded_ids: history,
+      p_city: profile.city
     })
 
       //     p_gender: profile.gender,
@@ -29,8 +30,6 @@ export const useMatchmaking = () => {
       return null
     }
 
-    console.log("Matchmaking RPC response:", data)
-
     // В Postgres функція повертає RETURNS TABLE, у JS це масив
     if (data && (data as any)[0]?.room_name) {
       const roomName = (data as any)[0].room_name
@@ -39,7 +38,6 @@ export const useMatchmaking = () => {
       return roomName
     }
 
-    console.log("No immediate match, waiting for Realtime...")
     subscribeToMatch()
     initHeartbeat()
     return null
