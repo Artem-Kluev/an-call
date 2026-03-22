@@ -50,7 +50,6 @@ export const useLiveKit = () => {
     })
 
     await room.connect(config.public.livekitUrl as string, token, {
-      autoSubscribe: true,
       maxRetries: 3, 
     })
     
