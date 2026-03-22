@@ -25,7 +25,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <UContainer class="bg-background relative flex min-h-screen max-w-md flex-col gap-8 py-10">
+  <UContainer class="bg-gray-500 relative flex min-h-screen max-w-md flex-col gap-8 py-10">
     <CallSearching v-if="state === 'searching'" @cancel="cancelSearch" />
     <CallActive v-else-if="state === 'active'" @end="endCall" />
     <CallDecision v-else-if="state === 'decision'" @choice="makeDecision" />
