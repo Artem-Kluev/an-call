@@ -24,7 +24,7 @@ export const useVoiceRoulette = () => {
   const startConnectionCheck = () => {
     if (connectionCheckInterval) clearInterval(connectionCheckInterval)
     connectionCheckInterval = setInterval(() => {
-      if (['active', 'decision', 'waiting'].includes(state.value)) {
+      if (state.value === 'active') {
         if (liveKit.room.remoteParticipants.size === 0 && liveKit.isConnected.value) {
           console.warn("No partner found in room, moving to disconnected state")
           state.value = 'disconnected'
@@ -45,7 +45,7 @@ export const useVoiceRoulette = () => {
   }
 
   watch(state, (newState) => {
-    if (['active', 'decision', 'waiting'].includes(newState)) {
+    if (state.value === "active") {
       startConnectionCheck()
     } else {
       stopConnectionCheck()
@@ -94,7 +94,8 @@ export const useVoiceRoulette = () => {
 
   // Якщо парнер скинув слухавку
   liveKit.onPartnerLeave(() => {
-    if (state.value === 'decision' || state.value === 'waiting') {
+    console.log("Partner left", state.value)
+    if (state.value === 'decision' || state.value === 'waiting' || state.value === 'rejected') {
       // Якщо партнер відключився до свого рішення - вважаємо це відмовою
       partnerDecision.value = null
       checkFinalResult()

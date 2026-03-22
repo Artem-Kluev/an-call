@@ -8,7 +8,7 @@ const { metadata, updateMetadata } = useUserMetadata();
 
 const form = ref({
   age: metadata.value.age || 18,
-  city: metadata.value.city || "Київ",
+  city: metadata.value.city || "Kyiv",
   gender: metadata.value.gender || "",
   seeking: metadata.value.seeking || "",
   is18: false,
@@ -59,6 +59,19 @@ const selectedLocale = computed({
     if (val && typeof val === "object" && "code" in val) {
       setLocale(val.code as "uk" | "ru" | "en");
     }
+  },
+});
+const cityOptions = computed(() => {
+  return ukraineCities.map((city) => ({
+    label: (city as any)[locale.value] || city.en,
+    value: city.en,
+  }));
+});
+
+const selectedCity = computed({
+  get: () => cityOptions.value.find((c) => c.value === form.value.city) || cityOptions.value.find(c => c.value === "Kyiv"),
+  set: (val: any) => {
+    if (val) form.value.city = val.value;
   },
 });
 </script>
@@ -118,13 +131,12 @@ const selectedLocale = computed({
 
         <UFormField :label="t('onboarding.fields.city.label')" size="lg">
           <USelectMenu
-            v-model="form.city"
-            :items="ukraineCities"
+            v-model="selectedCity"
+            :items="cityOptions"
             :placeholder="t('onboarding.fields.city.placeholder')"
             class="w-full rounded-2xl py-4"
             size="xl"
             searchable
-            :search-attributes="['label']"
           />
         </UFormField>
 

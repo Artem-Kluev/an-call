@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ukraineCities } from "~/utils/ukraineCities";
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const localePath = useLocalePath();
 
 const { metadata, updateMetadata } = useUserMetadata();
@@ -8,7 +8,7 @@ const isSubmitting = ref(false);
 
 const form = ref({
   age: 18,
-  city: "Київ",
+  city: "Kyiv",
   gender: "",
   seeking: "",
   is18: false,
@@ -56,6 +56,19 @@ const onSubmit = async () => {
     }
   }
 };
+const cityOptions = computed(() => {
+  return ukraineCities.map((city) => ({
+    label: (city as any)[locale.value] || city.en,
+    value: city.en,
+  }));
+});
+
+const selectedCity = computed({
+  get: () => cityOptions.value.find((c) => c.value === form.value.city) || cityOptions.value.find(c => c.value === "Kyiv"),
+  set: (val: any) => {
+    if (val) form.value.city = val.value;
+  },
+});
 </script>
 
 <template>
@@ -88,13 +101,12 @@ const onSubmit = async () => {
 
       <UFormField :label="t('onboarding.fields.city.label')" size="lg">
         <USelectMenu
-          v-model="form.city"
-          :items="ukraineCities"
+          v-model="selectedCity"
+          :items="cityOptions"
           :placeholder="t('onboarding.fields.city.placeholder')"
           class="w-full rounded-2xl py-3"
           size="xl"
           searchable
-          :search-attributes="['label']"
         />
       </UFormField>
 
