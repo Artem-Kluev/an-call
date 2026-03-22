@@ -90,6 +90,12 @@
       "text": "The partner didn't like back or you declined the request.",
       "button": "Try Again",
       "exit": "Exit"
+    },
+    "disconnected": {
+      "title": "Connection Lost",
+      "text": "It looks like your partner closed the tab or lost their connection.",
+      "button": "Try Again",
+      "exit": "Exit"
     }
   },
   "settings": {

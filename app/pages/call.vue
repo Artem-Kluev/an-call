@@ -6,6 +6,7 @@ import CallDecision from "~/components/call/Decision.vue";
 import CallWaiting from "~/components/call/Waiting.vue";
 import CallMatched from "~/components/call/Matched.vue";
 import CallRejected from "~/components/call/Rejected.vue";
+import CallDisconnected from "~/components/call/Disconnected.vue";
 
 const { 
   state, 
@@ -31,5 +32,6 @@ onMounted(() => {
     <CallWaiting v-else-if="state === 'waiting'" @cancel="cancelWaiting" />
     <CallMatched v-else-if="state === 'matched'" :username="partnerDecision" @reset="resetFlow" />
     <CallRejected v-else-if="state === 'rejected'" @reset="resetFlow" />
+    <CallDisconnected v-else-if="state === 'disconnected'" @reset="resetFlow" />
   </UContainer>
 </template>

@@ -47,7 +47,7 @@ export const useMatchmaking = () => {
     const userId = user.value?.sub
     if (!userId) return
 
-    console.log("Subscribing to match events for user:", userId)
+    saveToHistory(userId)
 
     channel = supabase
       .channel(`match_${userId}`) 
@@ -99,6 +99,23 @@ export const useMatchmaking = () => {
     const userId = user.value?.sub
     if (userId) {
       await supabase.from('matchmaking_queue').delete().eq('user_id', userId)
+    }
+  }
+
+  const saveToHistory = (partnerId: string) => {
+    if (!import.meta.client) return
+
+    console.log("saveToHistory: partnerId", partnerId)
+    if (!partnerId) return
+
+    try {
+      const history = JSON.parse(localStorage.getItem('history_ids') || '[]')
+      if (Array.isArray(history) && !history.includes(partnerId)) {
+        history.push(partnerId)
+        localStorage.setItem('history_ids', JSON.stringify(history))
+      }
+    } catch (e) {
+      console.error("Failed to save to history_ids", e)
     }
   }
 

@@ -1,7 +1,7 @@
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
-export type CallState = "searching" | "active" | "decision" | "waiting" | "matched" | "rejected";
+export type CallState = "searching" | "active" | "decision" | "waiting" | "matched" | "rejected" | "disconnected";
 
 export const useVoiceRoulette = () => {
   const state = ref<CallState>("searching")
@@ -44,13 +44,16 @@ export const useVoiceRoulette = () => {
 
   // Якщо парнер скинув слухавку
   liveKit.onPartnerLeave(() => {
-    if (state.value === 'active') {
-      endCall()
-    } else if (state.value === 'decision' || state.value === 'waiting') {
+    if (state.value === 'decision' || state.value === 'waiting') {
       // Якщо партнер відключився до свого рішення - вважаємо це відмовою
       partnerDecision.value = null
       checkFinalResult()
+
+      return
     }
+
+    state.value = 'disconnected'
+    liveKit.leave()
   })
 
   const checkFinalResult = () => {
@@ -61,6 +64,7 @@ export const useVoiceRoulette = () => {
       } else {
         state.value = "rejected"
       }
+
       // liveKit.leave()
     } else if (myDecision.value !== null && partnerDecision.value === undefined) {
       state.value = "waiting"
@@ -115,8 +119,6 @@ export const useVoiceRoulette = () => {
     }else{
       checkFinalResult()
     }
-    
-
   }
 
   const cancelWaiting = () => {

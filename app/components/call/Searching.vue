@@ -36,7 +36,7 @@ onUnmounted(() => {
       </div>
       <h2 class="text-title animate-pulse text-xl font-bold">{{ t("call.searching.status") }}</h2>
 
-      <div class="flex h-20 items-center justify-center px-6">
+      <div class="flex min-h-20 items-center justify-center px-6">
         <Transition name="fade" mode="out-in">
           <p :key="currentTipIndex" class="text-subtitle text-md max-w-xs text-center leading-relaxed italic">
             "{{ t(`call.searching.tips.${currentTipIndex}`) }}"

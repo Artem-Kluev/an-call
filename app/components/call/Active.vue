@@ -69,8 +69,8 @@ onUnmounted(() => {
       <div class="bg-primary/10 mx-auto mb-10 flex aspect-square w-40 items-center justify-center rounded-full">
         <UIcon name="i-heroicons-user" class="text-primary h-24 w-24 text-7xl" />
       </div>
-
-      <h2 class="text-primary text-p max-w-70 text-2xl font-bold">{{ t("call.active.partner") }}</h2>
+<!-- 
+      <h2 class="text-primary text-p max-w-70 text-2xl font-bold">{{ t("call.active.partner") }}</h2> -->
     </div>
 
     <div class="w-full text-center">
