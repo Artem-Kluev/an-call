@@ -24,7 +24,7 @@ onMounted(() => {
 });
 </script>
 
-<template>
+<template>wwwwwwwwwwwwwwww
   <UContainer class="bg-red-500 relative flex min-h-screen max-w-md flex-col gap-8 py-10">
     <CallSearching v-if="state === 'searching'" @cancel="cancelSearch" />
     <CallActive v-else-if="state === 'active'" @end="endCall" />
