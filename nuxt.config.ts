@@ -2,14 +2,14 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   css: ["./app/assets/css/main.css"],
   modules: ["@nuxt/icon", "@nuxt/image", "@vueuse/nuxt", "@nuxtjs/i18n", "@nuxt/ui", "@nuxtjs/supabase"],
   vite: {
     plugins: [tailwindcss()],
     server: {
-      allowedHosts: true
-    }
+      allowedHosts: true,
+    },
   },
   i18n: {
     langDir: "locales",
@@ -22,17 +22,17 @@ export default defineNuxtConfig({
     ],
   },
   colorMode: {
-    preference: 'light',
-    fallback: 'light',
-    classSuffix: '',
-    storageKey: 'nuxt-color-mode-disabled',
+    preference: "light",
+    fallback: "light",
+    classSuffix: "",
+    storageKey: "nuxt-color-mode-disabled",
   },
   supabase: {
     redirect: false,
   },
   runtimeConfig: {
     public: {
-      livekitUrl: '' // overridden by NUXT_PUBLIC_LIVEKIT_URL
-    }
-  }
+      livekitUrl: "", // overridden by NUXT_PUBLIC_LIVEKIT_URL
+    },
+  },
 });
