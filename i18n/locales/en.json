@@ -82,8 +82,7 @@
     },
     "matched": {
       "title": "It's a Match!",
-      "text": "{name} also wants to continue the conversation.",
-      "partner_fallback": "Partner",
+      "text": "You both liked each other. Here is your partner's Telegram:",
       "button": "Message on Telegram"
     },
     "rejected": {

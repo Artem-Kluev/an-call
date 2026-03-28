@@ -55,13 +55,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      find_match_v2: {
+      find_match_v3: {
         Args: {
-          p_age: number
+          p_user_id: string
+          p_excluded_ids: string[]
           p_city: string
           p_gender: string
           p_search_for: string
-          p_user_id: string
         }
         Returns: {
           matched_user_id: string

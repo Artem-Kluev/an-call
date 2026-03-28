@@ -8,7 +8,6 @@ export const useVoiceRoulette = () => {
   const state = ref<CallState>("searching");
   const partnerDecision = ref<string | null | undefined>(undefined);
   const partnerPhoto = ref<string | null>(null);
-  const partnerName = ref<string | null>(null);
   const myDecision = ref<boolean | null>(null);
   const user = useSupabaseUser();
 
@@ -73,11 +72,9 @@ export const useVoiceRoulette = () => {
       if (data.liked && typeof data.liked === "object") {
         partnerDecision.value = data.liked.username;
         partnerPhoto.value = data.liked.photo_url;
-        partnerName.value = data.liked.first_name;
       } else {
         partnerDecision.value = data.liked;
         partnerPhoto.value = null;
-        partnerName.value = null;
       }
       checkFinalResult();
     }
@@ -128,14 +125,11 @@ export const useVoiceRoulette = () => {
     myDecision.value = null;
     partnerDecision.value = undefined;
 
-    // Переконуємось що ми вийшли з попередньої кімнати
-    await liveKit.leave();
-
     const profile = {
-      gender: "male", // Fallback values as we are moving away from metadata for this specific check if needed
-      search_for: "female",
-      city: "Київ",
-      age: 18,
+      gender: metadata.value.gender || "male",
+      search_for: metadata.value.seeking || (metadata.value.gender === "male" ? "female" : "male"),
+      city: metadata.value.city || "Kyiv",
+      age: metadata.value.age || 18,
     };
 
     await wakeLock.requestWakeLock();
@@ -171,7 +165,6 @@ export const useVoiceRoulette = () => {
       ? {
           username: nickname,
           photo_url: photoUrl,
-          first_name: tgUser.value?.first_name || null,
         }
       : null;
 
@@ -212,7 +205,6 @@ export const useVoiceRoulette = () => {
     state,
     partnerDecision,
     partnerPhoto,
-    partnerName,
     beginSearch,
     cancelSearch,
     endCall,

@@ -6,7 +6,6 @@ const { showToast } = useCustomToast();
 const props = defineProps<{
   username?: string | null;
   photoUrl?: string | null;
-  firstName?: string | null;
 }>();
 
 const formattedUsername = computed(() => {
@@ -38,9 +37,7 @@ const telegramUrl = computed(() => {
       </div>
       <div class="space-y-4">
         <h2 class="text-title text-3xl font-black">{{ t("call.matched.title") }}</h2>
-        <p class="text-subtitle text-lg">
-          {{ t("call.matched.text", { name: props.firstName || t("call.matched.partner_fallback") }) }}
-        </p>
+        <p class="text-subtitle text-lg">{{ t("call.matched.text") }}</p>
 
         <div
           class="text-primary bg-primary/5 active:bg-primary/10 flex cursor-pointer items-center justify-center gap-3 rounded-3xl p-6 text-2xl font-black tracking-wider transition-all active:scale-95"
