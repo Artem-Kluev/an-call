@@ -8,6 +8,7 @@ export const useVoiceRoulette = () => {
   const state = ref<CallState>("searching");
   const partnerDecision = ref<string | null | undefined>(undefined);
   const partnerPhoto = ref<string | null>(null);
+  const partnerName = ref<string | null>(null);
   const myDecision = ref<boolean | null>(null);
   const user = useSupabaseUser();
 
@@ -36,15 +37,18 @@ export const useVoiceRoulette = () => {
     }
   });
 
-  const intervalHasPartner = setInterval(() => {
-    const hasPartner = !!liveKit.room?.remoteParticipants?.size;
+  let intervalHasPartner: any;
+  if (import.meta.client) {
+    intervalHasPartner = setInterval(() => {
+      const hasPartner = !!liveKit.room?.remoteParticipants?.size;
 
-    if (!hasPartner && liveKit.isConnected.value) {
-      disconnect();
-    }
+      if (!hasPartner && liveKit.isConnected.value) {
+        disconnect();
+      }
 
-    console.log("hasPartner", hasPartner);
-  }, 1000);
+      console.log("hasPartner", hasPartner);
+    }, 1000);
+  }
 
   // Коли партнер підключається до вже існуючої кімнати
   liveKit.onPartnerJoin(() => {
@@ -69,9 +73,11 @@ export const useVoiceRoulette = () => {
       if (data.liked && typeof data.liked === "object") {
         partnerDecision.value = data.liked.username;
         partnerPhoto.value = data.liked.photo_url;
+        partnerName.value = data.liked.first_name;
       } else {
         partnerDecision.value = data.liked;
         partnerPhoto.value = null;
+        partnerName.value = null;
       }
       checkFinalResult();
     }
@@ -161,10 +167,13 @@ export const useVoiceRoulette = () => {
     const nickname = tgUser.value?.username || "anonymous";
     const photoUrl = tgUser.value?.photo_url || null;
 
-    const likedData = liked ? {
-      username: nickname,
-      photo_url: photoUrl
-    } : null;
+    const likedData = liked
+      ? {
+          username: nickname,
+          photo_url: photoUrl,
+          first_name: tgUser.value?.first_name || null,
+        }
+      : null;
 
     await liveKit.sendMessage({ type: "decision", liked: likedData });
 
@@ -203,6 +212,7 @@ export const useVoiceRoulette = () => {
     state,
     partnerDecision,
     partnerPhoto,
+    partnerName,
     beginSearch,
     cancelSearch,
     endCall,

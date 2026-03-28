@@ -82,8 +82,9 @@
     },
     "matched": {
       "title": "Это взаимно!",
-      "text": "Вы понравились друг другу. Вот Telegram вашего собеседника:",
-      "button": "Написать в Telegram",
+      "text": "{name} тоже хочет продолжить общение.",
+      "partner_fallback": "Собеседник",
+      "button": "Написати в Telegram",
       "copied": "Скопировано!"
     },
     "rejected": {
