@@ -16,7 +16,8 @@ const {
   endCall, 
   makeDecision, 
   cancelWaiting, 
-  resetFlow
+  resetFlow,
+  partnerPhoto
 } = useVoiceRoulette();
 
 onMounted(() => {
@@ -30,7 +31,7 @@ onMounted(() => {
     <CallActive v-else-if="state === 'active'" @end="endCall" />
     <CallDecision v-else-if="state === 'decision'" @choice="makeDecision" />
     <CallWaiting v-else-if="state === 'waiting'" @cancel="cancelWaiting" />
-    <CallMatched v-else-if="state === 'matched'" :username="partnerDecision" @reset="resetFlow" />
+    <CallMatched v-else-if="state === 'matched'" :username="partnerDecision" :photo-url="partnerPhoto" @reset="resetFlow" />
     <CallRejected v-else-if="state === 'rejected'" @reset="resetFlow" />
     <CallDisconnected v-else-if="state === 'disconnected'" @reset="resetFlow" />
   </UContainer>

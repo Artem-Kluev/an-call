@@ -7,11 +7,13 @@ export type CallState = "searching" | "active" | "decision" | "waiting" | "match
 export const useVoiceRoulette = () => {
   const state = ref<CallState>("searching");
   const partnerDecision = ref<string | null | undefined>(undefined);
+  const partnerPhoto = ref<string | null>(null);
   const myDecision = ref<boolean | null>(null);
   const user = useSupabaseUser();
 
   const { startSearch, stopMatchmaking, matchResult } = useMatchmaking();
   const liveKit = useLiveKit();
+  const { tgUser } = useTelegramData();
   const { metadata } = useUserMetadata();
   const localePath = useLocalePath();
   const router = useRouter();
@@ -64,7 +66,13 @@ export const useVoiceRoulette = () => {
     }
 
     if (data.type === "decision") {
-      partnerDecision.value = data.liked;
+      if (data.liked && typeof data.liked === "object") {
+        partnerDecision.value = data.liked.username;
+        partnerPhoto.value = data.liked.photo_url;
+      } else {
+        partnerDecision.value = data.liked;
+        partnerPhoto.value = null;
+      }
       checkFinalResult();
     }
 
@@ -118,10 +126,10 @@ export const useVoiceRoulette = () => {
     await liveKit.leave();
 
     const profile = {
-      gender: metadata.value.gender || "male",
-      search_for: metadata.value.seeking || "female",
-      city: metadata.value.city || "Київ",
-      age: metadata.value.age || 18,
+      gender: "male", // Fallback values as we are moving away from metadata for this specific check if needed
+      search_for: "female",
+      city: "Київ",
+      age: 18,
     };
 
     await wakeLock.requestWakeLock();
@@ -150,8 +158,15 @@ export const useVoiceRoulette = () => {
     myDecision.value = liked;
 
     // Відправляємо наш вибір співрозмовнику через LiveKit
-    const nickname = metadata.value.username || "anonymous";
-    await liveKit.sendMessage({ type: "decision", liked: liked ? nickname : null });
+    const nickname = tgUser.value?.username || "anonymous";
+    const photoUrl = tgUser.value?.photo_url || null;
+
+    const likedData = liked ? {
+      username: nickname,
+      photo_url: photoUrl
+    } : null;
+
+    await liveKit.sendMessage({ type: "decision", liked: likedData });
 
     await stopMatchmaking();
 
@@ -187,6 +202,7 @@ export const useVoiceRoulette = () => {
   return {
     state,
     partnerDecision,
+    partnerPhoto,
     beginSearch,
     cancelSearch,
     endCall,
