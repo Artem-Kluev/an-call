@@ -14,26 +14,34 @@ const form = ref({
   is18: false,
 });
 
-watch(() => metadata.value, (newMeta) => {
-  if (newMeta && Object.keys(newMeta).length > 0) {
-    // Only update if the form seems untouched to prevent sudden resets
-    if (form.value.age === 18 && !form.value.gender && !form.value.seeking) {
-      form.value.age = newMeta.age || form.value.age;
-      form.value.city = newMeta.city || form.value.city;
-      form.value.gender = newMeta.gender || form.value.gender;
-      form.value.seeking = newMeta.seeking || form.value.seeking;
+watch(
+  () => metadata.value,
+  (newMeta) => {
+    if (newMeta && Object.keys(newMeta).length > 0) {
+      // Only update if the form seems untouched to prevent sudden resets
+      if (form.value.age === 18 && !form.value.gender && !form.value.seeking) {
+        form.value.age = newMeta.age || form.value.age;
+        form.value.city = newMeta.city || form.value.city;
+        form.value.gender = newMeta.gender || form.value.gender;
+        form.value.seeking = newMeta.seeking || form.value.seeking;
+      }
     }
-  }
-}, { immediate: true });
+  },
+  { immediate: true },
+);
 
-watchDebounced(form, async (newForm) => {
-  await updateMetadata({
-    age: newForm.age,
-    city: newForm.city,
-    gender: newForm.gender,
-    seeking: newForm.seeking
-  });
-}, { deep: true, debounce: 500, maxWait: 2000 });
+watchDebounced(
+  form,
+  async (newForm) => {
+    await updateMetadata({
+      age: newForm.age,
+      city: newForm.city,
+      gender: newForm.gender,
+      seeking: newForm.seeking,
+    });
+  },
+  { deep: true, debounce: 500, maxWait: 2000 },
+);
 
 const genders = [
   { value: "male", label: t("onboarding.fields.gender.male"), icon: "tabler:man" },
@@ -69,7 +77,8 @@ const cityOptions = computed(() => {
 });
 
 const selectedCity = computed({
-  get: () => cityOptions.value.find((c) => c.value === form.value.city) || cityOptions.value.find(c => c.value === "Kyiv"),
+  get: () =>
+    cityOptions.value.find((c) => c.value === form.value.city) || cityOptions.value.find((c) => c.value === "Kyiv"),
   set: (val: any) => {
     if (val) form.value.city = val.value;
   },
@@ -84,7 +93,7 @@ const selectedCity = computed({
         :to="localePath('/')"
         class="flex h-12 w-12 items-center justify-center rounded-2xl border border-gray-100 bg-gray-50 transition-all hover:bg-gray-100 active:scale-90 dark:border-gray-800 dark:bg-gray-800/50"
       >
-        <UIcon name="material-symbols:arrow-back-ios-rounded" class="text-xl" />
+        <UIcon name="material-symbols:arrow-back-ios-new" class="text-xl" />
       </NuxtLink>
       <h1 class="text-xl font-black">{{ t("settings.title") }}</h1>
       <div class="w-12"></div>

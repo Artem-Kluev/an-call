@@ -42,13 +42,21 @@ export const useVoiceRoulette = () => {
       const hasPartner = !!liveKit.room?.remoteParticipants?.size;
 
       if (!hasPartner && liveKit.isConnected.value) {
-        disconnect();
+        console.log("No partner found", !hasPartner, liveKit.isConnected.value);
+        checkHasPartner();
       }
-
-      console.log("hasPartner", hasPartner);
-    }, 1000);
+    }, 300);
   }
 
+  function checkHasPartner() {
+    setTimeout(() => {
+      const hasPartner = !!liveKit.room?.remoteParticipants?.size;
+
+      if (!hasPartner && liveKit.isConnected.value) {
+        disconnect();
+      }
+    }, 3000);
+  }
   // Коли партнер підключається до вже існуючої кімнати
   liveKit.onPartnerJoin(() => {
     if (state.value === "active") {

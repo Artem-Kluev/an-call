@@ -1,5 +1,20 @@
 <script setup lang="ts">
-const { t } = useI18n();
+import { ukraineCities } from "~/utils/ukraineCities";
+const { t, locale } = useI18n();
+const { metadata } = useUserMetadata();
+const localePath = useLocalePath();
+
+const currentCityName = computed(() => {
+  const cityEn = metadata.value.city || "Kyiv";
+  const city = ukraineCities.find((c) => c.en === cityEn);
+  return city ? (city as any)[locale.value] : cityEn;
+});
+
+const enterCall = () => {
+  const canEnter = useState("can-enter-call", () => false);
+  canEnter.value = true;
+  navigateTo(localePath("/call"));
+};
 </script>
 
 <template>
@@ -32,14 +47,14 @@ const { t } = useI18n();
           <!-- Subtle Location -->
           <div class="text-primary flex items-center justify-center gap-2">
             <UIcon name="i-heroicons-map-pin" class="h-4 w-4 text-xl" />
-            <span class="text-lg font-bold tracking-widest uppercase">{{ t("home.location") }}</span>
+            <span class="text-lg font-bold tracking-widest uppercase">{{ currentCityName }}</span>
           </div>
         </div>
       </div>
 
       <!-- Action -->
       <div class="w-full pt-3">
-        <UButton to="/call" size="xl" block class="shadow-primary/20 rounded-full py-6 text-lg font-bold shadow-xl">
+        <UButton size="xl" block class="shadow-primary/20 rounded-full py-6 text-lg font-bold shadow-xl" @click="enterCall">
           {{ t("call.idle.start") }}
         </UButton>
       </div>

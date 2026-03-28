@@ -23,6 +23,10 @@ const {
 onMounted(() => {
   beginSearch();
 });
+
+definePageMeta({
+  middleware: "call-guard",
+});
 </script>
 
 <template>

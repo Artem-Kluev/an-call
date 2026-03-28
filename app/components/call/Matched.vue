@@ -28,12 +28,13 @@ const telegramUrl = computed(() => {
   <div class="flex grow flex-col">
     <div class="flex grow flex-col items-center justify-center space-y-8 px-4 text-center">
       <div class="bg-primary/10 flex aspect-square w-40 items-center justify-center overflow-hidden rounded-full">
-        <template v-if="props.photoUrl">
+        <!-- <template v-if="props.photoUrl">
           <img :src="props.photoUrl" class="h-full w-full object-cover" />
         </template>
         <template v-else>
           <UIcon name="mdi:checkbox-marked-circle-outline" class="text-primary h-24 w-24 text-5xl opacity-50" />
-        </template>
+        </template> -->
+        <UIcon name="mdi:checkbox-marked-circle-outline" class="text-primary h-24 w-24 text-5xl opacity-50" />
       </div>
       <div class="space-y-4">
         <h2 class="text-title text-3xl font-black">{{ t("call.matched.title") }}</h2>
