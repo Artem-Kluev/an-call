@@ -12,13 +12,14 @@ export const useMatchmaking = () => {
 
     const history = useCallHistory().getHistoryIds();
 
-    const { data, error } = await supabase.rpc("find_match_v3", {
+    const { data, error } = await supabase.rpc("find_match_v4", {
       p_user_id: userId,
       //@ts-ignore
       p_excluded_ids: history,
       p_city: profile.city,
       p_gender: profile.gender,
       p_search_for: profile.search_for,
+      p_age: Number(profile.age),
     });
 
     if (error) {
