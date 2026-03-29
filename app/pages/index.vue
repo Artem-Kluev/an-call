@@ -25,10 +25,10 @@ const requestPermission = async () => {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     stream.getTracks().forEach((track) => track.stop());
-    showPermissionModal.value = false;
-    navigateToCall();
   } catch (e) {
-    console.error("Microphone access denied", e);
+    console.warn("Microphone access denied", e);
+  } finally {
+    showPermissionModal.value = false;
   }
 };
 
@@ -107,27 +107,18 @@ const enterCall = async () => {
     <Teleport to="body">
       <div v-if="showPermissionModal" class="fixed inset-0 z-1000 flex items-center justify-center p-4">
         <!-- Backdrop -->
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="showPermissionModal = false"></div>
+        <div class="absolute inset-0 bg-black/50" @click="showPermissionModal = false"></div>
 
         <!-- Modal Card -->
         <UCard class="relative w-full max-w-sm shadow-2xl">
-          <template #header>
-            <div class="flex items-center justify-between">
-              <h3 class="text-xl font-bold leading-6 text-gray-900 dark:text-white">
+          <div class="">
+            <div class="relative">
+              <h3 class="mt-3 mb-4 text-center text-xl font-bold">
                 {{ t("permissions.mic.title") }}
               </h3>
-              <UButton
-                color="neutral"
-                variant="ghost"
-                icon="i-heroicons-x-mark-20-solid"
-                class="-my-1"
-                @click="showPermissionModal = false"
-              />
             </div>
-          </template>
 
-          <div class="space-y-4">
-            <p class="text-subtitle text-base leading-relaxed">
+            <p class="text-subtitle px-8 text-center text-base leading-relaxed">
               {{ t("permissions.mic.text") }}
             </p>
           </div>
