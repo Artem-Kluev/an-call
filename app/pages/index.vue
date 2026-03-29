@@ -46,6 +46,10 @@ const enterCall = async () => {
     showPermissionModal.value = true;
   }
 };
+
+onMounted(() => {
+  useCallHistory().cleanOldHistory();
+});
 </script>
 
 <template>

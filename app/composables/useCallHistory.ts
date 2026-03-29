@@ -6,12 +6,6 @@ interface HistoryItem {
 export const useCallHistory = () => {
   const STORAGE_KEY = "history_ids";
 
-  return {
-    addToHistory: () => {},
-    getHistoryIds: () => [],
-    cleanOldHistory: () => [],
-  };
-
   const getHistory = (): HistoryItem[] => {
     if (!import.meta.client) return [];
     try {
@@ -47,7 +41,7 @@ export const useCallHistory = () => {
 
   const addToHistory = (id: string) => {
     if (!id) return;
-    const history = cleanOldHistory();
+    const history = getHistory();
     if (!history.find((item) => item.id === id)) {
       history.push({ id, date: new Date().toISOString() });
       saveHistory(history);
@@ -55,7 +49,7 @@ export const useCallHistory = () => {
   };
 
   const getHistoryIds = () => {
-    const history = cleanOldHistory();
+    const history = getHistory();
     return history.map((item) => item.id);
   };
 

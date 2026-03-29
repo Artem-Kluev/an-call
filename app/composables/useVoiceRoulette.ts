@@ -38,9 +38,8 @@ export const useVoiceRoulette = () => {
         // Відправляємо свій ID партнеру
         await liveKit.sendMessage({ type: "hello", id: userId });
       } catch (e) {
-        console.error("Failed to join LiveKit room", e);
-        state.value = "searching"; // Повертаємося до пошуку
-        callStartTime.value = null;
+        console.warn("Failed to join LiveKit room", e);
+        disconnect();
       }
     }
   });
