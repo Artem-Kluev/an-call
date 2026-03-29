@@ -18,13 +18,21 @@ export const useVoiceRoulette = () => {
   const localePath = useLocalePath();
   const router = useRouter();
   const wakeLock = useWakeLock();
+  const supabase = useSupabaseClient();
   const userId = user.value?.sub;
   let sendEndInterval: NodeJS.Timeout | null = null;
+
+  // Statistics tracking
+  const searchStartTime = ref<number | null>(null);
+  const callStartTime = ref<number | null>(null);
+  const partnerId = ref<string | null>(null);
+  const hasLogged = ref(false);
 
   // Коли знаходимо пару - одразу переходимо в active і підключаємося до LiveKit
   watch(matchResult, async (result) => {
     if (result?.room_name && state.value === "searching") {
       state.value = "active";
+      callStartTime.value = Date.now();
       try {
         await liveKit.join(result.room_name);
         // Відправляємо свій ID партнеру
@@ -32,6 +40,7 @@ export const useVoiceRoulette = () => {
       } catch (e) {
         console.error("Failed to join LiveKit room", e);
         state.value = "searching"; // Повертаємося до пошуку
+        callStartTime.value = null;
       }
     }
   });
@@ -73,6 +82,7 @@ export const useVoiceRoulette = () => {
     // console.log("Received message:", data);
 
     if (data.type === "hello" && data.id) {
+      partnerId.value = data.id;
       useCallHistory().addToHistory(data.id);
     }
 
@@ -132,6 +142,10 @@ export const useVoiceRoulette = () => {
     matchResult.value = null;
     myDecision.value = null;
     partnerDecision.value = undefined;
+    searchStartTime.value = Date.now();
+    callStartTime.value = null;
+    partnerId.value = null;
+    hasLogged.value = false;
 
     const profile = {
       gender: metadata.value.gender || "male",
@@ -145,9 +159,42 @@ export const useVoiceRoulette = () => {
   };
 
   const cancelSearch = async () => {
+    await saveMatchStats();
     await stopMatchmaking();
     await wakeLock.releaseWakeLock();
     router.push(localePath("/"));
+  };
+
+  const saveMatchStats = async () => {
+    if (hasLogged.value || !searchStartTime.value || !userId) return;
+
+    const now = Date.now();
+    const waitDuration = Math.floor(((callStartTime.value || now) - searchStartTime.value) / 1000);
+    const callDuration = callStartTime.value ? Math.floor((now - callStartTime.value) / 1000) : 0;
+
+    const stats = {
+      user_id: userId,
+      user_nickname: tgUser.value?.username || "anonymous",
+      user_gender: metadata.value.gender || "male",
+      seeking_gender: metadata.value.seeking || "female",
+      city: metadata.value.city || "Kyiv",
+      age: metadata.value.age || 18,
+      wait_duration: waitDuration,
+      call_duration: callDuration,
+      is_connected: !!callStartTime.value,
+      user_liked: myDecision.value === true,
+      is_mutual: state.value === "matched",
+      partner_id: partnerId.value,
+    };
+
+    try {
+      const { error } = await supabase.from("match_history" as any).insert(stats as any);
+      if (error) throw error;
+      hasLogged.value = true;
+      console.log("Match history saved successfully", stats);
+    } catch (e) {
+      console.error("Failed to save match history:", e);
+    }
   };
 
   const endCall = (sendMessage: boolean = true) => {
@@ -178,12 +225,15 @@ export const useVoiceRoulette = () => {
 
     await liveKit.sendMessage({ type: "decision", liked: likedData });
 
+    if (liked) {
+      checkFinalResult();
+    }
+
     await stopMatchmaking();
 
     if (!liked) {
+      await saveMatchStats();
       router.push(localePath("/"));
-    } else {
-      checkFinalResult();
     }
 
     if (!liked) {
@@ -208,6 +258,12 @@ export const useVoiceRoulette = () => {
     await wakeLock.releaseWakeLock();
     await beginSearch();
   };
+
+  watch(state, (newState) => {
+    if (newState === "matched" || newState === "rejected" || newState === "disconnected") {
+      saveMatchStats();
+    }
+  });
 
   return {
     state,
