@@ -37,8 +37,10 @@ watch(
 </script>
 
 <template>
-  <NuxtLayout>
-    <NuxtPage />
-  </NuxtLayout>
-  <AppToast />
+  <UApp>
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+    <AppToast />
+  </UApp>
 </template>

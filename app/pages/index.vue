@@ -10,10 +10,41 @@ const currentCityName = computed(() => {
   return city ? (city as any)[locale.value] : cityEn;
 });
 
-const enterCall = () => {
+const showPermissionModal = ref(false);
+
+const checkMicPermission = async () => {
+  try {
+    const result = await navigator.permissions.query({ name: "microphone" as PermissionName });
+    return result.state === "granted";
+  } catch (e) {
+    return false;
+  }
+};
+
+const requestPermission = async () => {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.getTracks().forEach((track) => track.stop());
+    showPermissionModal.value = false;
+    navigateToCall();
+  } catch (e) {
+    console.error("Microphone access denied", e);
+  }
+};
+
+const navigateToCall = () => {
   const canEnter = useState("can-enter-call", () => false);
   canEnter.value = true;
   navigateTo(localePath("/call"));
+};
+
+const enterCall = async () => {
+  const isGranted = await checkMicPermission();
+  if (isGranted) {
+    navigateToCall();
+  } else {
+    showPermissionModal.value = true;
+  }
 };
 </script>
 
@@ -54,7 +85,12 @@ const enterCall = () => {
 
       <!-- Action -->
       <div class="w-full pt-3">
-        <UButton size="xl" block class="shadow-primary/20 rounded-full py-6 text-lg font-bold shadow-xl" @click="enterCall">
+        <UButton
+          size="xl"
+          block
+          class="shadow-primary/20 rounded-full py-6 text-lg font-bold shadow-xl"
+          @click="enterCall"
+        >
           {{ t("call.idle.start") }}
         </UButton>
       </div>
@@ -67,5 +103,47 @@ const enterCall = () => {
         1,280 Online
       </p>
     </div> -->
+    <!-- Permissions Modal -->
+    <Teleport to="body">
+      <div v-if="showPermissionModal" class="fixed inset-0 z-1000 flex items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="showPermissionModal = false"></div>
+
+        <!-- Modal Card -->
+        <UCard class="relative w-full max-w-sm shadow-2xl">
+          <template #header>
+            <div class="flex items-center justify-between">
+              <h3 class="text-xl font-bold leading-6 text-gray-900 dark:text-white">
+                {{ t("permissions.mic.title") }}
+              </h3>
+              <UButton
+                color="neutral"
+                variant="ghost"
+                icon="i-heroicons-x-mark-20-solid"
+                class="-my-1"
+                @click="showPermissionModal = false"
+              />
+            </div>
+          </template>
+
+          <div class="space-y-4">
+            <p class="text-subtitle text-base leading-relaxed">
+              {{ t("permissions.mic.text") }}
+            </p>
+          </div>
+
+          <template #footer>
+            <UButton
+              size="xl"
+              block
+              class="shadow-primary/20 rounded-full py-4 text-lg font-bold shadow-xl"
+              @click="requestPermission"
+            >
+              {{ t("permissions.mic.button") }}
+            </UButton>
+          </template>
+        </UCard>
+      </div>
+    </Teleport>
   </UContainer>
 </template>

@@ -111,5 +111,12 @@
       "light": "Light",
       "dark": "Dark"
     }
+  },
+  "permissions": {
+    "mic": {
+      "title": "Grant Microphone Access",
+      "text": "To communicate in the voice roulette, we need access to your microphone. Please click the button below and allow access in the system prompt.",
+      "button": "Grant Access"
+    }
   }
 }

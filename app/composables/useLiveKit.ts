@@ -12,8 +12,8 @@ export const useLiveKit = () => {
     },
     reconnectPolicy: {
       nextRetryDelayInMs: (context) => {
-        if (context.retryCount < 3) return 1000;
-        // Якщо за 3 спроби не вийшло, повертаємо null (кінець)
+        if (context.retryCount < 5) return 1000;
+        // Якщо за 5 спроби не вийшло, повертаємо null (кінець)
         return null;
       },
     },
@@ -53,7 +53,7 @@ export const useLiveKit = () => {
     });
 
     await room.connect(config.public.livekitUrl as string, token, {
-      maxRetries: 3,
+      maxRetries: 5,
     });
 
     // Спробуємо підключити лише мікрофон, якщо камери немає:
