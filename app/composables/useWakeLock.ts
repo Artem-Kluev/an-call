@@ -1,52 +1,58 @@
-import { ref, onUnmounted, computed } from 'vue'
+import { ref, onUnmounted, computed, onMounted } from "vue";
 
 export const useWakeLock = () => {
-  const sentinel = ref<any>(null)
+  const sentinel = ref<any>(null);
+  // Прапорець, чи ПОВИНЕН бути активний замок за логікою програми
+  const shouldBeActive = ref(false);
 
   const request = async () => {
-    if (!import.meta.client || !('wakeLock' in navigator)) return
-    
-    // If already active, don't request again
-    if (sentinel.value) return
+    if (!import.meta.client || !("wakeLock" in navigator)) return;
 
     try {
-      sentinel.value = await (navigator as any).wakeLock.request('screen')
-      
-      sentinel.value.addEventListener('release', () => {
-        sentinel.value = null
-      })
-      
+      sentinel.value = await (navigator as any).wakeLock.request("screen");
+      shouldBeActive.value = true;
+
+      sentinel.value.addEventListener("release", () => {
+        console.log("Wake Lock was released");
+        // Не скидаємо shouldBeActive, бо ми хочемо його відновити пізніше
+        sentinel.value = null;
+      });
+
+      console.log("Wake Lock is active ☀️");
     } catch (err) {
-      console.warn('Failed to request Wake Lock:', err)
+      console.warn("Failed to request Wake Lock:", err);
     }
-  }
+  };
 
   const release = async () => {
+    shouldBeActive.value = false;
     if (sentinel.value) {
-      try {
-        await sentinel.value.release()
-        sentinel.value = null
-      } catch (err) {
-        console.error('Failed to release Wake Lock:', err)
-      }
+      await sentinel.value.release();
+      sentinel.value = null;
     }
-  }
+  };
 
-  // Handle re-requesting when page visibility changes (browser releases wake lock when hidden)
+  // ФІКС: Автоматичне відновлення при поверненні на вкладку
   const handleVisibilityChange = async () => {
-    if (document.visibilityState === 'visible' && !sentinel.value) {
-      // Note: We only re-request if we intentionallly had it active before.
-      // However, the caller should manage when to start/stop the lock.
+    if (document.visibilityState === "visible" && shouldBeActive.value && !sentinel.value) {
+      await request();
     }
-  }
+  };
 
-  onUnmounted(() => {
-    release()
-  })
+  if (import.meta.client) {
+    onMounted(() => {
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+    });
+
+    onUnmounted(() => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      release();
+    });
+  }
 
   return {
     requestWakeLock: request,
     releaseWakeLock: release,
-    isActive: computed(() => !!sentinel.value)
-  }
-}
+    isActive: computed(() => !!sentinel.value),
+  };
+};

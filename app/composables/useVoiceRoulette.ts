@@ -112,7 +112,10 @@ export const useVoiceRoulette = () => {
 
     if (state.value === "decision" || state.value === "waiting") {
       // Якщо партнер відключився до свого рішення - вважаємо це відмовою
-      partnerDecision.value = null;
+      if (partnerDecision.value === undefined) {
+        partnerDecision.value = null;
+      }
+
       checkFinalResult();
 
       return;
@@ -123,18 +126,15 @@ export const useVoiceRoulette = () => {
   }
 
   const checkFinalResult = () => {
-    // Якщо обидва зробили вибір
-    if (myDecision.value !== null && partnerDecision.value !== undefined) {
-      if (myDecision.value && partnerDecision.value !== null) {
-        state.value = "matched";
-      } else {
-        state.value = "rejected";
-      }
+    if (myDecision.value === null) return;
 
-      // liveKit.leave()
-    } else if (myDecision.value !== null && partnerDecision.value === undefined) {
+    if (partnerDecision.value === undefined) {
       state.value = "waiting";
+      return;
     }
+
+    const isMutualMatch = myDecision.value && partnerDecision.value !== null;
+    state.value = isMutualMatch ? "matched" : "rejected";
   };
 
   const beginSearch = async () => {
@@ -248,10 +248,10 @@ export const useVoiceRoulette = () => {
   });
 
   const cancelWaiting = async () => {
-    state.value = "rejected";
-    await liveKit.leave();
-    await stopMatchmaking();
-    await wakeLock.releaseWakeLock();
+    // await liveKit.leave();
+    // await stopMatchmaking();
+    // await wakeLock.releaseWakeLock();
+    router.push(localePath("/"));
   };
 
   const resetFlow = async () => {

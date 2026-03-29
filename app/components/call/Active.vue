@@ -69,7 +69,7 @@ onUnmounted(() => {
       <div class="bg-primary/10 mx-auto mb-10 flex aspect-square w-40 items-center justify-center rounded-full">
         <UIcon name="i-heroicons-user" class="text-primary h-24 w-24 text-7xl" />
       </div>
-<!-- 
+      <!-- 
       <h2 class="text-primary text-p max-w-70 text-2xl font-bold">{{ t("call.active.partner") }}</h2> -->
     </div>
 
@@ -92,7 +92,7 @@ onUnmounted(() => {
         >
           <UIcon name="i-heroicons-phone-x-mark" class="h-10 w-10 text-2xl" />
         </UButton>
-<!-- 
+        <!-- 
         <UButton
           color="primary"
           variant="soft"
@@ -107,7 +107,7 @@ onUnmounted(() => {
     <!-- Lock Screen Overlay -->
     <div
       v-if="isLocked"
-      class="fixed inset-0 z-9999 flex flex-col items-center justify-center bg-gray-950/80 transition-all duration-300"
+      class="fixed inset-0 z-9999 flex flex-col items-center justify-center bg-gray-950/80 transition-all duration-300 select-none"
       @click="handleUnlockTap"
     >
       <p class="px-16 text-center text-xl leading-relaxed font-black text-white">
